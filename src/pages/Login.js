@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { ValidateForm } from "../utils/VallidationCheck";
 
 const Login = () => {
   const [userData, setUserData] = useState({ email: "", password: "" });
@@ -12,38 +13,35 @@ const Login = () => {
   };
 
   const onFormSubmit = async () => {
-    let formValid = true;
-    const errors = {};
-
-    if (!userData.email) {
-      errors.email = "Email is required";
-      formValid = false;
-    }
-
-    if (!userData.password) {
-      errors.password = "Password is required";
-      formValid = false;
-    }
-
-    if (formValid) {
-      const response = await fetch(
-        `${process.env.REACT_APP_BASE_URL}user/login`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(userData),
+    const isVallid = ValidateForm(userData);
+    if (isVallid.formValid) {
+      try {
+        const response = await fetch(
+          `${process.env.REACT_APP_BASE_URL}user/login`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(userData),
+          }
+        );
+        console.log(response);
+        if (response.ok) {
+          const jsonData = await response.json();
+          localStorage.setItem("user", JSON.stringify(jsonData.user));
+          localStorage.setItem("token", JSON.stringify(jsonData.token));
+          navigate("/polling");
+        } else if (response.status === 401) {
+          setError({ ...error, password: "Password is incorrect" });
+        } else {
+          setError({ password: "", email: "User data not found" });
         }
-      );
-      const jsonData = await response.json();
-      if (jsonData) {
-        localStorage.setItem("user", JSON.stringify(jsonData.user));
-        localStorage.setItem("token", JSON.stringify(jsonData.token));
-        navigate("/polling");
+      } catch (error) {
+        setError({ ...error, email: "Email or password incoorect." });
       }
     } else {
-      setError(errors);
+      setError(isVallid.errors);
     }
   };
 
