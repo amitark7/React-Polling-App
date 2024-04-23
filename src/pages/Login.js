@@ -1,53 +1,40 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ValidateForm } from "../utils/VallidationCheck";
+import { useDispatch, useSelector } from "react-redux";
+import { loginUser } from "../redux/reducer/authReducer";
 
 const Login = () => {
   const [userData, setUserData] = useState({ email: "", password: "" });
-  const [error, setError] = useState({});
+  const { error, loading } = useSelector((state) => state.auth);
+  const [errors, setErrors] = useState({});
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const formOnChange = (e) => {
     setUserData({ ...userData, [e.target.name]: e.target.value });
-    setError({ ...error, [e.target.name]: "" });
+    setErrors({ ...error, [e.target.name]: "" });
   };
+
+  useEffect(() => {
+    setErrors(error);
+  }, [error]);
 
   const onFormSubmit = async () => {
     const isVallid = ValidateForm(userData);
     if (isVallid.formValid) {
-      try {
-        const response = await fetch(
-          `${process.env.REACT_APP_BASE_URL}user/login`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(userData),
-          }
-        );
-        console.log(response);
-        if (response.ok) {
-          const jsonData = await response.json();
-          localStorage.setItem("user", JSON.stringify(jsonData.user));
-          localStorage.setItem("token", JSON.stringify(jsonData.token));
-          navigate("/polling");
-        } else if (response.status === 401) {
-          setError({ ...error, password: "Password is incorrect" });
-        } else {
-          setError({ password: "", email: "User data not found" });
-        }
-      } catch (error) {
-        setError({ ...error, email: "Email or password incoorect." });
+      const result = dispatch(loginUser(userData));
+      if (result) {
+        navigate("/polling");
       }
     } else {
-      setError(isVallid.errors);
+      setErrors(isVallid.errors);
     }
   };
 
   return (
     <div className="flex flex-col items-center justify-center ">
-      <div className="border bg-white w-[25%] py-10 px-5 text-center rounded-lg mx-auto mt-20 shadow-lg">
+      <div className="border bg-white w-[90%] sm:w-[50%] md:w-[40%] xl:w-[30%] 2xl:w-[25%] py-10 px-5 text-center rounded-lg mx-auto mt-20 shadow-lg">
         <h1 className="text-3xl font-semibold">Login</h1>
         <form className="flex flex-col my-6 text-black text-left">
           <input
@@ -55,29 +42,32 @@ const Login = () => {
             name="email"
             placeholder="Email ID"
             className={`w-full rounded-md py-3 pl-2 outline-none border-2 mt-4 ${
-              error.email ? "border-red-500" : ""
+              errors.email ? "border-red-500" : ""
             }`}
             value={userData.email}
             onChange={(e) => formOnChange(e)}
           />
-          {error.email && <p className="text-red-500">{error.email}</p>}
+          {errors.email && <p className="text-red-500">{errors.email}</p>}
           <input
             type="password"
             name="password"
             placeholder="Password"
             className={`w-full rounded-md py-3 pl-2 outline-none border-2 mt-4 ${
-              error.password ? "border-red-500" : ""
+              errors.password ? "border-red-500" : ""
             }`}
             value={userData.password}
             onChange={(e) => formOnChange(e)}
           />
-          {error.password && <p className="text-red-500">{error.password}</p>}
+          {errors.password && <p className="text-red-500">{errors.password}</p>}
         </form>
         <button
           onClick={onFormSubmit}
-          className="w-full bg-blue-400 py-2 text-xl rounded-md mb-4 font-semibold"
+          disabled={loading}
+          className={`w-full ${
+            loading ? "bg-blue-400" : "bg-blue-500"
+          } py-2 text-xl rounded-md mb-4 font-semibold`}
         >
-          Login
+          {loading ? "Loading..." : "Login"}
         </button>
         <p className="text-base">
           Don't have an account? <Link to="/signup">Register</Link>
