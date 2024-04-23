@@ -2,8 +2,8 @@ import React from "react";
 
 const PollsPage = () => {
   return (
-    <div className="mx-auto">
-      <h1>This Is Poll Page</h1>
+    <div className="mx-auto text-center">
+      <h1 className="text-3xl">This Is Poll Page</h1>
     </div>
   );
 };

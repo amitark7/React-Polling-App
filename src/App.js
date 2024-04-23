@@ -8,6 +8,7 @@ import PollsPage from "./pages/PollsPage";
 import AddPoll from "./pages/AddPoll";
 import { useEffect, useState } from "react";
 import NotFound from "./pages/NotFound";
+import PrivateRoute from "./utils/PrivateRoute";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -24,12 +25,31 @@ function App() {
     <>
       {isLoggedIn && <Navbar />}
       <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/polling" element={<PollsPage />} />
-        <Route path="/addpoll" element={<AddPoll />} />
-        <Route path="/users" element={<UserList />} />
-        <Route path="/createuser" element={<Signup />} />
+        <Route
+          path="/"
+          element={<PrivateRoute Component={Login} redirectTo="/" />}
+        />
+        <Route
+          path="/signup"
+          element={<PrivateRoute Component={Signup} redirectTo="/signup" />}
+        />
+        <Route
+          path="/polling"
+          element={<PrivateRoute Component={PollsPage} redirectTo="/polling" />}
+        />
+        <Route
+          path="/addPoll"
+          element={<PrivateRoute Component={AddPoll} redirectTo="/addPoll" />}
+        />
+        <Route
+          path="/createUser"
+          element={<PrivateRoute Component={Signup} redirectTo="/createUser" />}
+        />
+
+        <Route
+          path="/users"
+          element={<PrivateRoute Component={UserList} redirectTo="/users" />}
+        />
         <Route path="/*" element={<NotFound />} />
       </Routes>
     </>
