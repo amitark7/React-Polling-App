@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { ValidateForm } from "../utils/VallidationCheck";
+import { ValidateForm } from "../utils/ValidationCheck";
 import { useDispatch, useSelector } from "react-redux";
 import { loginUser } from "../redux/reducer/authReducer";
 
@@ -20,7 +20,7 @@ const Login = () => {
   }, [error]);
 
   const onFormSubmit = async () => {
-    const isFormValid = ValidateForm(userData);
+    const isFormValid = ValidateForm(userData, true);
     if (isFormValid.isValid) {
       const result = await dispatch(loginUser(userData));
       if (result.payload?.ok) {
