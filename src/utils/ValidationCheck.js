@@ -16,8 +16,8 @@ export const ValidateForm = (userData, isLogin = false) => {
       isValid = false;
     }
   } else {
-    if (userData.firstName.length < 6) {
-      errors.firstName = "First name must be at least 6 characters.";
+    if (userData.firstName.length < 3) {
+      errors.firstName = "First name must be at least 3 characters.";
       isValid = false;
     }
 
@@ -37,8 +37,9 @@ export const ValidateForm = (userData, isLogin = false) => {
     if (!userData.password.trim()) {
       errors.password = "Password is required";
       isValid = false;
-    } else if (userData.password.length < 6) {
-      errors.password = "Password must be at least 6 characters long";
+    } else if (!/(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}/.test(userData.password)) {
+      errors.password =
+        "Password must contain at least one uppercase letter, one lowercase letter, and one digit";
       isValid = false;
     }
 

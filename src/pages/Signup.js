@@ -1,12 +1,15 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ValidateForm } from "../utils/ValidationCheck";
 import { useDispatch, useSelector } from "react-redux";
 import { signupUser } from "../redux/reducer/authReducer";
+import { roleFetch } from "../redux/reducer/rollFetchReducer";
+import { BiHide, BiShow } from "react-icons/bi";
 
 const Signup = () => {
   const navigate = useNavigate();
   const { loading } = useSelector((state) => state.auth);
+  const { role } = useSelector((state) => state.role);
   const dispatch = useDispatch();
   const [userData, setUserData] = useState({
     firstName: "",
@@ -18,11 +21,14 @@ const Signup = () => {
   });
   const [errors, setErrors] = useState({});
   const [showModal, setShowModal] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const formOnChange = (e) => {
     setUserData({ ...userData, [e.target.name]: e.target.value });
     setErrors({ ...errors, [e.target.name]: "" });
   };
+
   const handleNavigate = () => {
     navigate("/");
     setShowModal(false);
@@ -42,6 +48,10 @@ const Signup = () => {
       setErrors(isFormValid.errors);
     }
   };
+
+  useEffect(() => {
+    dispatch(roleFetch());
+  }, []);
 
   return (
     <div className="flex flex-col items-center justify-center">
@@ -68,14 +78,14 @@ const Signup = () => {
           </div>
         </div>
       )}
-      <div className="border bg-white w-[90%] sm:w-[50%] md:w-[40%] xl:w-[30%] 2xl:w-[25%] py-4 md:py-10 px-5 text-center rounded-lg mx-auto mt-6 xl:mt-10 shadow-lg">
+      <div className="border bg-white w-[90%] sm:w-[50%] md:w-[40%] xl:w-[30%] 2xl:w-[25%] py-4 md:py-4 px-5 text-center rounded-lg mx-auto mt-6 xl:mt-10 shadow-lg">
         <h1 className="text-3xl font-semibold">Signup</h1>
         <form className="flex flex-col my-6 text-black text-left">
           <input
             type="text"
             name="firstName"
             placeholder="First Name"
-            className={`w-full rounded-md py-3 pl-2 outline-none border-2 mt-2 ${
+            className={`w-full rounded-md py-2 sm:py-3 pl-2 outline-none border-2 mt-2 ${
               errors.firstName ? "border-red-700" : ""
             }`}
             value={userData.firstName}
@@ -88,7 +98,7 @@ const Signup = () => {
             type="text"
             name="lastName"
             placeholder="Last Name"
-            className={`w-full rounded-md py-3 pl-2 outline-none border-2 mt-3 ${
+            className={`w-full rounded-md py-2 sm:py-3 pl-2 outline-none border-2 mt-3 ${
               errors.lastName ? "border-red-700" : ""
             }`}
             value={userData.lastName}
@@ -101,7 +111,7 @@ const Signup = () => {
             type="email"
             name="email"
             placeholder="Email ID"
-            className={`w-full rounded-md py-3 pl-2 outline-none border-2 mt-3 ${
+            className={`w-full rounded-md py-2 sm:py-3 pl-2 outline-none border-2 mt-3 ${
               errors.email ? "border-red-700" : ""
             }`}
             value={userData.email}
@@ -110,45 +120,67 @@ const Signup = () => {
           {errors.email && (
             <p className="text-red-700 text-xs">{errors.email}</p>
           )}
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            className={`w-full rounded-md py-3 pl-2 outline-none border-2 mt-3 ${
-              errors.password ? "border-red-700" : ""
-            }`}
-            value={userData.password}
-            onChange={(e) => formOnChange(e)}
-          />
+          <div className="relative">
+            <input
+              type={showPassword ? "text" : "password"}
+              name="password"
+              placeholder="Password"
+              className={`w-full rounded-md py-2 sm:py-3 pl-2 outline-none border-2 mt-3 ${
+                errors.password ? "border-red-700" : ""
+              }`}
+              value={userData.password}
+              onChange={(e) => formOnChange(e)}
+            />
+            <button
+              type="button"
+              className="absolute inset-y-0 right-0 flex items-center px-3 text-gray-600 focus:outline-none"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? <BiHide /> : <BiShow />}
+            </button>
+          </div>
           {errors.password && (
             <p className="text-red-700 text-xs">{errors.password}</p>
           )}
-          <input
-            type="password"
-            name="confirmPassword"
-            placeholder="Confirm Password"
-            className={`w-full rounded-md py-3 pl-2 outline-none border-2 mt-3 ${
-              errors.confirmPassword ? "border-red-700" : ""
-            }`}
-            value={userData.confirmPassword}
-            onChange={(e) => formOnChange(e)}
-          />
+          <div className="relative">
+            <input
+              type={showConfirmPassword ? "text" : "password"}
+              name="confirmPassword"
+              placeholder="Confirm Password"
+              className={`w-full rounded-md py-2 sm:py-3 pl-2 outline-none border-2 mt-3 ${
+                errors.confirmPassword ? "border-red-700" : ""
+              }`}
+              value={userData.confirmPassword}
+              onChange={(e) => formOnChange(e)}
+            />
+            <button
+              type="button"
+              className="absolute inset-y-0 top-1 right-0 flex items-center px-3 text-gray-600 focus:outline-none"
+              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+            >
+              {showConfirmPassword ? <BiHide /> : <BiShow />}
+            </button>
+          </div>
           {errors.confirmPassword && (
             <p className="text-red-700 text-xs">{errors.confirmPassword}</p>
           )}
           <select
             name="roleId"
             id="roleId"
-            className={`w-full rounded-md py-3 pl-2 outline-none border-2 mt-3 ${
+            className={`w-full rounded-md py-2 sm:py-3 pl-2 outline-none border-2 mt-3 ${
               errors.role ? "border-red-700" : ""
             }`}
             onChange={formOnChange}
             value={userData.role}
           >
             <option value="">Select Role</option>
-            <option value="1">Admin</option>
-            <option value="2">User</option>
-            <option value="3">Hr</option>
+            {role?.map((role, index) => {
+              return (
+                <option key={index} value={`${role.id}`}>
+                  {role.name}
+                </option>
+              );
+            })}
           </select>
           {errors.roleId && (
             <p className="text-red-700 text-xs">{errors.roleId}</p>
