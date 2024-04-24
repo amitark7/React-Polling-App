@@ -10,7 +10,6 @@ const Login = () => {
   const [errors, setErrors] = useState({});
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
   const formOnChange = (e) => {
     setUserData({ ...userData, [e.target.name]: e.target.value });
     setErrors({ ...error, [e.target.name]: "" });
@@ -21,14 +20,18 @@ const Login = () => {
   }, [error]);
 
   const onFormSubmit = async () => {
-    const isVallid = ValidateForm(userData);
-    if (isVallid.formValid) {
-      const result = dispatch(loginUser(userData));
-      if (result) {
+    const isFormValid = ValidateForm(userData, true);
+    if (isFormValid.isValid) {
+      const result = await dispatch(loginUser(userData));
+      if (result.payload.ok) {
         navigate("/polling");
+      } else if (result.payload.status === 401) {
+        setErrors({ ...errors, password: "Password is incorrect" });
+      } else {
+        setErrors({ ...errors, email: "User data not found" });
       }
     } else {
-      setErrors(isVallid.errors);
+      setErrors(isFormValid.errors);
     }
   };
 

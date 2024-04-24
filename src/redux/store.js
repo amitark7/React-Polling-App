@@ -7,4 +7,5 @@ export const store = configureStore({
     auth: authReducer,
     isFetching: isFetchReducer,
   },
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware(),
 });

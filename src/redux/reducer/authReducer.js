@@ -1,6 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
-// Async thunk for logging in user
 export const loginUser = createAsyncThunk(
   "auth/loginUser",
   async (userData) => {
@@ -19,11 +18,9 @@ export const loginUser = createAsyncThunk(
         const data = await response.json();
         localStorage.setItem("user", JSON.stringify(data.user));
         localStorage.setItem("token", JSON.stringify(data.token));
-        return data;
-      } else if (response.status === 401) {
-        throw new Error("Password is incorrect");
+        return response;
       } else {
-        throw new Error("Email not existed");
+        return response;
       }
     } catch (error) {
       throw new Error(error.message);
@@ -51,12 +48,12 @@ const authReducer = createSlice({
       })
       .addCase(loginUser.fulfilled, (state, action) => {
         state.loading = false;
-        state.user = action.payload.user;
-        state.token = action.payload.token;
+        state.user = action.payload?.user;
+        state.token = action.payload?.token;
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;
-        state.error = { email: "", password: "" };
+        state.error = action.error.message;
         localStorage.clear();
       });
   },
