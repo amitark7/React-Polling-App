@@ -1,4 +1,5 @@
 import { Route, Routes, useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
 import "./App.css";
 import Navbar from "./component/Navbar";
 import UserList from "./pages/UserList";
@@ -6,7 +7,6 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import PollsPage from "./pages/PollsPage";
 import AddPoll from "./pages/AddPoll";
-import { useEffect, useState } from "react";
 import NotFound from "./pages/NotFound";
 import PrivateRoute from "./utils/PrivateRoute";
 

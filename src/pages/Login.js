@@ -12,7 +12,7 @@ const Login = () => {
   const navigate = useNavigate();
   const formOnChange = (e) => {
     setUserData({ ...userData, [e.target.name]: e.target.value });
-    setErrors({ ...error, [e.target.name]: "" });
+    setErrors({ ...errors, [e.target.name]: "" });
   };
 
   useEffect(() => {
@@ -20,12 +20,12 @@ const Login = () => {
   }, [error]);
 
   const onFormSubmit = async () => {
-    const isFormValid = ValidateForm(userData, true);
+    const isFormValid = ValidateForm(userData);
     if (isFormValid.isValid) {
       const result = await dispatch(loginUser(userData));
-      if (result.payload.ok) {
+      if (result.payload?.ok) {
         navigate("/polling");
-      } else if (result.payload.status === 401) {
+      } else if (result.payload?.status === 401) {
         setErrors({ ...errors, password: "Password is incorrect" });
       } else {
         setErrors({ ...errors, email: "User data not found" });
