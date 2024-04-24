@@ -1,29 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
-export const signupUser = createAsyncThunk(
-  "auth/signupUser",
-  async (userData) => {
-    try {
-      const response = await fetch(
-        `${process.env.REACT_APP_BASE_URL}user/register`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(userData),
-        }
-      );
-      if (response.ok) {
-        return response;
-      } else {
-        return response;
-      }
-    } catch (error) {
-      throw new Error(error.message);
-    }
-  }
-);
 export const loginUser = createAsyncThunk(
   "auth/loginUser",
   async (userData) => {
@@ -79,15 +55,6 @@ const authReducer = createSlice({
         state.loading = false;
         state.error = action.error.message;
         localStorage.clear();
-      })
-      .addCase(signupUser.pending, (state) => {
-        state.loading = true;
-      })
-      .addCase(signupUser.fulfilled, (state) => {
-        state.loading = false;
-      })
-      .addCase(signupUser.rejected, (state) => {
-        state.loading = false;
       });
   },
 });
