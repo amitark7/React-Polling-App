@@ -68,7 +68,7 @@ const Signup = () => {
           </div>
         </div>
       )}
-      <div className="border bg-white w-[30%] shadow-lg py-4 px-5 text-center rounded-lg mx-auto mt-10">
+      <div className="border bg-white w-[90%] sm:w-[50%] md:w-[40%] xl:w-[30%] 2xl:w-[25%] py-4 md:py-10 px-5 text-center rounded-lg mx-auto mt-6 xl:mt-10 shadow-lg">
         <h1 className="text-3xl font-semibold">Signup</h1>
         <form className="flex flex-col my-6 text-black text-left">
           <input
