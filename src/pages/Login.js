@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { ValidateForm } from "../utils/ValidationCheck";
+import { validateForm } from "../utils/validationCheck";
 import { useDispatch, useSelector } from "react-redux";
 import { loginUser } from "../redux/reducer/authReducer";
 
@@ -20,10 +20,10 @@ const Login = () => {
   }, [error]);
 
   const onFormSubmit = async () => {
-    const isFormValid = ValidateForm(userData, true);
+    const isFormValid = validateForm(userData, true);
     if (isFormValid.isValid) {
       const result = await dispatch(loginUser(userData));
-      if (result.payload?.ok) {
+      if (result.payload?.status === 200) {
         navigate("/polling");
       } else if (result.payload?.status === 401) {
         setErrors({ ...errors, password: "Password is incorrect" });

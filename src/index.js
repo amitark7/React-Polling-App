@@ -6,8 +6,32 @@ import reportWebVitals from "./reportWebVitals";
 import { Provider } from "react-redux";
 import { store } from "./redux/store";
 import { BrowserRouter } from "react-router-dom";
+import axios from "axios";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
+const instance = axios.create({
+  baseURL: `${process.env.REACT_APP_BASE_URL}`,
+  timeout: 10000,
+});
+instance.interceptors.request.use(
+  function (config) {
+    console.log(config);
+    return config;
+  },
+  function (error) {
+    return Promise.reject(error);
+  }
+);
+
+instance.interceptors.response.use(
+  function (response) {
+    console.log(response);
+    return response;
+  },
+  function (error) {
+    return Promise.reject(error);
+  }
+);
 root.render(
   <React.StrictMode>
     <BrowserRouter>
