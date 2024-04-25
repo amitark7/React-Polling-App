@@ -1,4 +1,4 @@
-import { Route, Routes, useLocation } from "react-router-dom";
+import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import "./App.css";
 import Navbar from "./component/Navbar";
@@ -13,7 +13,12 @@ import PrivateRoute from "./utils/PrivateRoute";
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const location = useLocation();
-
+  const navigate = useNavigate();
+  const onLogout = () => {
+    localStorage.clear();
+    navigate("/");
+    setIsLoggedIn(false);
+  };
   useEffect(() => {
     const userFetch = JSON.parse(localStorage.getItem("user"));
     if (userFetch) {
@@ -23,7 +28,7 @@ function App() {
 
   return (
     <>
-      {isLoggedIn && <Navbar />}
+      {isLoggedIn && <Navbar onLogout={onLogout} />}
       <Routes>
         <Route
           path="/"
