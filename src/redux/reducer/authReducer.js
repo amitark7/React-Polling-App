@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
+import axiosInterceptor from "../../utils/axiosInterceptor";
 
 export const signupUser = createAsyncThunk(
   "auth/signupUser",
@@ -72,5 +73,5 @@ const authReducer = createSlice({
 });
 
 export const { setLoading } = authReducer.actions;
-
+axiosInterceptor();
 export default authReducer.reducer;

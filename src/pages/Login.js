@@ -23,7 +23,7 @@ const Login = () => {
     const isFormValid = validateForm(userData, true);
     if (isFormValid.isValid) {
       const result = await dispatch(loginUser(userData));
-      if (result.payload.status === 200) {
+      if (result.payload?.status === 200) {
         navigate("/polling");
       } else if (result.payload?.status === 401) {
         setErrors({ ...errors, password: "Password is incorrect" });
