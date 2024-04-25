@@ -1,16 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { ValidateForm } from "../utils/ValidationCheck";
 import { useDispatch, useSelector } from "react-redux";
 import { signupUser } from "../redux/reducer/authReducer";
-import { roleFetch } from "../redux/reducer/rollFetchReducer";
+import { getRoleList } from "../redux/reducer/rollListFetchReducer";
 import { BiHide, BiShow } from "react-icons/bi";
 import ConfimationModal from "../component/ConfimationModal";
+import { validateForm } from "../utils/validationCheck";
+import ErrorComponent from "../component/ErrorComponent";
 
 const Signup = () => {
   const navigate = useNavigate();
   const { loading } = useSelector((state) => state.auth);
-  const { role } = useSelector((state) => state.role);
+  const { roleList } = useSelector((state) => state.roleList);
   const dispatch = useDispatch();
   const [userData, setUserData] = useState({
     firstName: "",
@@ -25,7 +26,7 @@ const Signup = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const formOnChange = (e) => {
+  const onFormChange = (e) => {
     setUserData({ ...userData, [e.target.name]: e.target.value });
     setErrors({ ...errors, [e.target.name]: "" });
   };
@@ -37,10 +38,10 @@ const Signup = () => {
 
   const onFormSubmit = async (e) => {
     e.preventDefault();
-    const isFormValid = ValidateForm(userData);
+    const isFormValid = validateForm(userData);
     if (isFormValid.isValid) {
       const result = await dispatch(signupUser(userData));
-      if (result.payload?.ok) {
+      if (result.payload) {
         setShowModal(true);
       } else {
         setErrors({ ...errors, email: "Email already registered" });
@@ -51,12 +52,21 @@ const Signup = () => {
   };
 
   useEffect(() => {
-    dispatch(roleFetch());
+    dispatch(getRoleList());
   }, []);
 
   return (
     <div className="flex flex-col items-center justify-center">
-      {showModal && <ConfimationModal handleNavigate={handleNavigate} />}
+      {showModal && (
+        <ConfimationModal
+          modalTitle={"Successfully"}
+          modalSubTitle={
+            "User signup Succesfully! Click Ok to Redirect Login Page."
+          }
+          btnOkText={"Ok"}
+          onBtnOkClick={handleNavigate}
+        />
+      )}
       <div className="border bg-white w-[90%] sm:w-[50%] md:w-[40%] xl:w-[30%] 2xl:w-[25%] py-4 md:py-4 px-5 text-center rounded-lg mx-auto mt-6 xl:mt-10 shadow-lg">
         <h1 className="text-3xl font-semibold">Signup</h1>
         <form className="flex flex-col my-6 text-black text-left">
@@ -68,11 +78,9 @@ const Signup = () => {
               errors.firstName ? "border-red-700" : ""
             }`}
             value={userData.firstName}
-            onChange={(e) => formOnChange(e)}
+            onChange={(e) => onFormChange(e)}
           />
-          {errors.firstName && (
-            <p className="text-red-700 text-xs">{errors.firstName}</p>
-          )}
+          <ErrorComponent errorMessage={errors.firstName} />
           <input
             type="text"
             name="lastName"
@@ -81,11 +89,9 @@ const Signup = () => {
               errors.lastName ? "border-red-700" : ""
             }`}
             value={userData.lastName}
-            onChange={(e) => formOnChange(e)}
+            onChange={(e) => onFormChange(e)}
           />
-          {errors.lastName && (
-            <p className="text-red-700 text-xs">{errors.lastName}</p>
-          )}
+          <ErrorComponent errorMessage={errors.lastname} />
           <input
             type="email"
             name="email"
@@ -94,11 +100,9 @@ const Signup = () => {
               errors.email ? "border-red-700" : ""
             }`}
             value={userData.email}
-            onChange={(e) => formOnChange(e)}
+            onChange={(e) => onFormChange(e)}
           />
-          {errors.email && (
-            <p className="text-red-700 text-xs">{errors.email}</p>
-          )}
+          <ErrorComponent errorMessage={errors.email} />
           <div className="relative">
             <input
               type={showPassword ? "text" : "password"}
@@ -108,7 +112,7 @@ const Signup = () => {
                 errors.password ? "border-red-700" : ""
               }`}
               value={userData.password}
-              onChange={(e) => formOnChange(e)}
+              onChange={(e) => onFormChange(e)}
             />
             <button
               type="button"
@@ -118,9 +122,7 @@ const Signup = () => {
               {showPassword ? <BiHide /> : <BiShow />}
             </button>
           </div>
-          {errors.password && (
-            <p className="text-red-700 text-xs">{errors.password}</p>
-          )}
+          <ErrorComponent errorMessage={errors.password} />
           <div className="relative">
             <input
               type={showConfirmPassword ? "text" : "password"}
@@ -130,7 +132,7 @@ const Signup = () => {
                 errors.confirmPassword ? "border-red-700" : ""
               }`}
               value={userData.confirmPassword}
-              onChange={(e) => formOnChange(e)}
+              onChange={(e) => onFormChange(e)}
             />
             <button
               type="button"
@@ -140,20 +142,18 @@ const Signup = () => {
               {showConfirmPassword ? <BiHide /> : <BiShow />}
             </button>
           </div>
-          {errors.confirmPassword && (
-            <p className="text-red-700 text-xs">{errors.confirmPassword}</p>
-          )}
+          <ErrorComponent errorMessage={errors.confirmPassword} />
           <select
             name="roleId"
             id="roleId"
             className={`w-full rounded-md py-2 sm:py-3 pl-2 outline-none border-2 mt-3 ${
               errors.role ? "border-red-700" : ""
             }`}
-            onChange={formOnChange}
+            onChange={onFormChange}
             value={userData.role}
           >
             <option value="">Select Role</option>
-            {role?.map((role, index) => {
+            {roleList?.map((role, index) => {
               return (
                 <option key={index} value={`${role.id}`}>
                   {role.name}
@@ -161,9 +161,7 @@ const Signup = () => {
               );
             })}
           </select>
-          {errors.roleId && (
-            <p className="text-red-700 text-xs">{errors.roleId}</p>
-          )}
+          <ErrorComponent errorMessage={errors.roleId} />
         </form>
         <button
           onClick={onFormSubmit}

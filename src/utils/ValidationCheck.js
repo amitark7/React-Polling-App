@@ -1,4 +1,4 @@
-export const ValidateForm = (userData, isLogin = false) => {
+export const validateForm = (userData, isLogin = false) => {
   let isValid = true;
   const errors = {};
 

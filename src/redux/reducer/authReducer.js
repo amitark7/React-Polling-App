@@ -1,24 +1,15 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import axios from "axios";
 
 export const signupUser = createAsyncThunk(
   "auth/signupUser",
   async (userData) => {
     try {
-      const response = await fetch(
+      const response = await axios.post(
         `${process.env.REACT_APP_BASE_URL}user/register`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(userData),
-        }
+        userData
       );
-      if (response.ok) {
-        return response;
-      } else {
-        return response;
-      }
+      return response.data;
     } catch (error) {
       throw new Error(error.message);
     }
@@ -28,26 +19,15 @@ export const loginUser = createAsyncThunk(
   "auth/loginUser",
   async (userData) => {
     try {
-      const response = await fetch(
+      const response = await axios.post(
         `${process.env.REACT_APP_BASE_URL}user/login`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(userData),
-        }
+        userData
       );
-      if (response.ok) {
-        const data = await response.json();
-        localStorage.setItem("user", JSON.stringify(data.user));
-        localStorage.setItem("token", JSON.stringify(data.token));
-        return response;
-      } else {
-        return response;
-      }
+      localStorage.setItem("user", JSON.stringify(response?.data.user));
+      localStorage.setItem("token", JSON.stringify(response?.data.token));
+      return response;
     } catch (error) {
-      throw new Error(error.message);
+      return error.response;
     }
   }
 );
@@ -77,7 +57,7 @@ const authReducer = createSlice({
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message;
+        // state.error = action.error.message;
         localStorage.clear();
       })
       .addCase(signupUser.pending, (state) => {

@@ -1,11 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit";
 import authReducer from "./reducer/authReducer";
-import rollFetchReducer from "./reducer/rollFetchReducer";
+import rollFetchReducer from "./reducer/rollListFetchReducer";
 
 export const store = configureStore({
   reducer: {
     auth: authReducer,
-    role: rollFetchReducer,
+    roleList: rollFetchReducer,
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware(),
 });
