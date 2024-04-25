@@ -16,7 +16,7 @@ export const ValidateForm = (userData, isLogin = false) => {
       isValid = false;
     }
   } else {
-    if (userData.firstName.length < 3) {
+    if (userData.firstName.trim() === "" || userData.firstName.length < 3) {
       errors.firstName = "First name must be at least 3 characters.";
       isValid = false;
     }

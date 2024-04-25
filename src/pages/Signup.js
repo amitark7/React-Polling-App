@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { signupUser } from "../redux/reducer/authReducer";
 import { roleFetch } from "../redux/reducer/rollFetchReducer";
 import { BiHide, BiShow } from "react-icons/bi";
+import ConfimationModal from "../component/ConfimationModal";
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -55,29 +56,7 @@ const Signup = () => {
 
   return (
     <div className="flex flex-col items-center justify-center">
-      {showModal && (
-        <div className="fixed inset-0 flex justify-center items-center z-10">
-          <div className="modal-overlay fixed inset-0 bg-gray-500 opacity-50"></div>
-          <div className="modal-container bg-white w-11/12 md:max-w-md mx-auto rounded shadow-lg z-50 overflow-y-auto flex flex-col items-center">
-            <div className="modal-content py-6 text-left px-4">
-              <div className="flex justify-between items-center pb-3">
-                <p className="text-2xl font-bold mb-3">Successfully !</p>
-              </div>
-              <p className="mb-3">
-                User signup Succesfully! Click Ok to Redirect Login Page.
-              </p>
-              <div className="mt-7 flex justify-end">
-                <button
-                  onClick={handleNavigate}
-                  className="px-4 py-2 text-gray-800 rounded-md bg-green-300 hover:bg-green-400"
-                >
-                  OK
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      {showModal && <ConfimationModal handleNavigate={handleNavigate} />}
       <div className="border bg-white w-[90%] sm:w-[50%] md:w-[40%] xl:w-[30%] 2xl:w-[25%] py-4 md:py-4 px-5 text-center rounded-lg mx-auto mt-6 xl:mt-10 shadow-lg">
         <h1 className="text-3xl font-semibold">Signup</h1>
         <form className="flex flex-col my-6 text-black text-left">
