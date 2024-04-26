@@ -8,7 +8,8 @@ const Navbar = ({ onLogout }) => {
   const [userData, setUserData] = useState({});
   const [showProfile, setShowProfile] = useState(false);
   const [showNavbarMenu, setShowNavbarMenu] = useState(false);
-
+  const ADMIN_ID=2
+  
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"));
     if (user) {
@@ -34,7 +35,7 @@ const Navbar = ({ onLogout }) => {
           <li>
             <Link to={"/polling"}>Polls</Link>
           </li>
-          {userData.roleId === 2 && (
+          {userData.roleId === ADMIN_ID && (
             <>
               {navbarRoute.map((item,index) => {
                 return <Link key={index} to={item.path}>{item.name}</Link>;
