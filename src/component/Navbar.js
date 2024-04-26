@@ -2,11 +2,12 @@ import React, { useEffect, useState } from "react";
 import { FaUserCircle } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { FaBars } from "react-icons/fa";
+import { navbarRoute } from "../utils/navbarData";
 
 const Navbar = ({ onLogout }) => {
   const [userData, setUserData] = useState({});
-  const [showLogoutModal, setShowLogoutModal] = useState(false);
-  const [showMenu, setShowMenu] = useState(false);
+  const [showProfile, setShowProfile] = useState(false);
+  const [showNavbarMenu, setShowNavbarMenu] = useState(false);
 
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"));
@@ -19,15 +20,15 @@ const Navbar = ({ onLogout }) => {
     <div className="relative">
       <div className="flex justify-between items-center px-4 sm:px-8 md:px-10 py-2 bg-black text-white">
         <div className="md:hidden block text-xl">
-          <FaBars onClick={() => setShowMenu(!showMenu)} />
+          <FaBars onClick={() => setShowNavbarMenu(!showNavbarMenu)} />
         </div>
         <ul
           className={`absolute bg-black px-4 sm:px-8 pb-4 top-[100%] left-0 ${
-            showMenu ? "flex" : "hidden"
+            showNavbarMenu ? "flex" : "hidden"
           } w-full md:pb-0 md:static flex-col md:flex md:flex-row gap-3 text-[14px] md:text-lg font-semibold cursor-pointer md:items-center`}
           onClick={() => {
-            setShowMenu(false);
-            setShowLogoutModal(false);
+            setShowNavbarMenu(false);
+            setShowProfile(false);
           }}
         >
           <li>
@@ -35,26 +36,20 @@ const Navbar = ({ onLogout }) => {
           </li>
           {userData.roleId === 2 && (
             <>
-              <li>
-                <Link to={"/addpoll"}>Add Poll</Link>
-              </li>
-              <li>
-                <Link to={"/createuser"}>Create User</Link>
-              </li>
-              <li>
-                <Link to={"/users"}>List Users</Link>
-              </li>
+              {navbarRoute.map((item,index) => {
+                return <Link key={index} to={item.path}>{item.name}</Link>;
+              })}
             </>
           )}
         </ul>
         <div
           className="flex items-center gap-2"
-          onClick={() => setShowLogoutModal(!showLogoutModal)}
+          onClick={() => setShowProfile(!showProfile)}
         >
           <div className="text-3xl md:text-4xl cursor-pointer">
             <FaUserCircle />
           </div>
-          {showLogoutModal && (
+          {showProfile && (
             <div className="absolute right-[0%] w-[200px] md:w-[250px] top-[100%] flex text-black flex-col items-start font-semibold bg-white shadow-md rounded">
               <h1 className="text-xs p-2 pr-20 md:text-base">{`${userData.firstName} ${userData.lastName}`}</h1>
               <hr className="w-full border-gray-400" />

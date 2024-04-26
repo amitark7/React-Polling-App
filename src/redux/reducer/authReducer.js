@@ -52,7 +52,6 @@ const authReducer = createSlice({
         state.loading = true;
       })
       .addCase(loginUser.fulfilled, (state, action) => {
-        console.log(action);
         state.loading = false;
         state.user = action.payload?.data.user;
         state.token = action.payload?.data.token;
