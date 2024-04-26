@@ -3,10 +3,11 @@ import axios from "axios";
 const axiosInterceptor = () => {
   axios.interceptors.request.use(
     (config) => {
-      const token = localStorage.getItem("token");
+      const token = JSON.parse(localStorage.getItem("token"));
       if (token) {
-        config.headers.Authorization = `${token}`;
+        config.headers.token = `${token}`;
       }
+      config.headers['Access-Control-Allow-Origin']='*'
       config.headers["ngrok-skip-browser-warning"]="69420"
       return config;
     },

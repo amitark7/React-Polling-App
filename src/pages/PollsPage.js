@@ -1,26 +1,53 @@
-import React, { useEffect } from "react";
-import axiosInstance from "../utils/axiosInterceptor";
+import React, { useEffect, useState } from "react";
+import PollItem from "../component/PollItem";
+import { useDispatch, useSelector } from "react-redux";
+import { getPollList } from "../redux/reducer/pollListReducer";
 
 const PollsPage = () => {
-  const fetchUserData = async () => {
-    // Example GET request
-    axiosInstance
-      .post("/polling")
-      .then((response) => {
-        // Handle response data
-      })
-      .catch((error) => {
-        // Handle error
-      });
-  };
+  const [pollsList, setPollList] = useState([
+    {
+      title:"Who is the winner",
+      optionList:[
+        {
+          optionTitle:"Ram"
+        },{
+          optionTitle:"Shyam"
+        }
+      ]
+    },{
+      title:"Who is the loser",
+      optionList:[
+        {
+          optionTitle:"Ram"
+        },{
+          optionTitle:"Shyam"
+        }
+      ]
+    },{
+      title:"Who is the winner",
+      optionList:[
+        {
+          optionTitle:"Ram"
+        },{
+          optionTitle:"Shyam"
+        }
+      ]
+    }
+  ]);
+  const [pageNumber, setPageNumber] = useState(1);
+  const { pollList } = useSelector((state) => state.pollList);
+  const dispatch = useDispatch();
+  console.log(pollList);
   useEffect(() => {
-    // fetchUserData();
-  }, []);
+    dispatch(getPollList(pageNumber));
+  }, [pageNumber]);
+
   return (
-    <div className="mx-auto text-center">
-      <h1 className="text-3xl">This Is Poll Page</h1>
+    <div>
+      {pollsList?.map((poll, index) => {
+        return <PollItem key={index} poll={poll} />;
+      })}
     </div>
   );
 };
-
 export default PollsPage;
