@@ -4,7 +4,12 @@ import axios from "axios";
 export const getRoleList = createAsyncThunk("role/roleFetch", async () => {
   try {
     const response = await axios.get(
-      `${process.env.REACT_APP_BASE_URL}role/list`
+      `${process.env.REACT_APP_BASE_URL}role/list`,
+      {
+        headers:{
+          "ngrok-skip-browser-warning": "69420",
+        },
+      }
     );
     return response.data;
   } catch (error) {
