@@ -1,15 +1,11 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
+import axiosInterceptor from "../../utils/axiosInterceptor";
 
 export const getRoleList = createAsyncThunk("role/roleFetch", async () => {
   try {
     const response = await axios.get(
-      `${process.env.REACT_APP_BASE_URL}role/list`,
-      {
-        headers:{
-          "ngrok-skip-browser-warning": "69420",
-        },
-      }
+      `${process.env.REACT_APP_BASE_URL}role/list`
     );
     return response.data;
   } catch (error) {
@@ -26,5 +22,6 @@ const rollSlice = createSlice({
     }),
   ],
 });
+axiosInterceptor()
 
 export default rollSlice.reducer;

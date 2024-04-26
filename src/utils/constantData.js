@@ -1,1 +1,1 @@
-export const ADMIN_ID=2;
+export const ADMIN_ID = 2;

@@ -7,6 +7,7 @@ const axiosInterceptor = () => {
       if (token) {
         config.headers.Authorization = `${token}`;
       }
+      config.headers["ngrok-skip-browser-warning"]="69420"
       return config;
     },
     (error) => {

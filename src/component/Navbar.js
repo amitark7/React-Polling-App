@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { FaUserCircle } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { FaBars } from "react-icons/fa";
-import { navbarRoute } from "../utils/navbarData";
+import navbarData from "../utils/navbarData.json";
 import { ADMIN_ID } from "../utils/constantData";
 
 const Navbar = ({ onLogout }) => {
@@ -37,7 +37,7 @@ const Navbar = ({ onLogout }) => {
           </li>
           {userData.roleId === ADMIN_ID && (
             <>
-              {navbarRoute.map((item, index) => {
+              {navbarData.map((item, index) => {
                 return (
                   <Link key={index} to={item.path}>
                     {item.name}
@@ -48,24 +48,24 @@ const Navbar = ({ onLogout }) => {
           )}
         </ul>
         <div
-          className="flex items-center gap-2"
+          className="flex items-center relative gap-2"
           onClick={() => {
             setShowProfile(!showProfile);
             setShowNavbarMenu(false);
           }}
         >
-          <div className="text-3xl md:text-4xl cursor-pointer">
+          <div className="text-3xl flex gap-2 items-center md:text-4xl cursor-pointer">
             <FaUserCircle />
+            <div>
+              <h1 className="text-xs md:text-base">{`${userData.firstName} ${userData.lastName}`}</h1>
+              <p className="text-xs md:text-base">{userData.email}</p>
+            </div>
           </div>
           {showProfile && (
-            <div className="absolute right-[0%] w-[200px] md:w-[250px] top-[100%] flex text-black flex-col items-start font-semibold bg-white shadow-md rounded">
-              <h1 className="text-xs p-2 pr-20 md:text-base">{`${userData.firstName} ${userData.lastName}`}</h1>
-              <hr className="w-full border-gray-400" />
-              <p className="text-xs p-2 md:text-base">{userData.email}</p>
-              <hr className="w-full border-gray-400" />
+            <div className="absolute left-[0%] w-full top-[116%] flex text-black flex-col font-semibold bg-red-500 shadow-md rounded">
               <button
                 onClick={() => onLogout()}
-                className="rounded-md p-2 mr-2 text-xs md:text-base"
+                className="rounded-md p-3 mr-2 text-xs md:text-lg"
               >
                 Logout
               </button>
