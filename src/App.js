@@ -1,5 +1,4 @@
-import { Route, Routes, useLocation } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { Route, Routes } from "react-router-dom";
 import "./App.css";
 import Navbar from "./component/Navbar";
 import UserList from "./pages/UserList";
@@ -11,19 +10,9 @@ import NotFound from "./pages/NotFound";
 import PrivateRoute from "./utils/PrivateRoute";
 
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const location = useLocation();
-
-  useEffect(() => {
-    const userFetch = JSON.parse(localStorage.getItem("user"));
-    if (userFetch) {
-      setIsLoggedIn(true);
-    }
-  }, [location]);
-
   return (
     <>
-      {isLoggedIn && <Navbar />}
+      <Navbar />
       <Routes>
         <Route
           path="/"

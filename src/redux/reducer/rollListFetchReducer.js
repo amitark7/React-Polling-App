@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
+import axiosInterceptor from "../../utils/axiosInterceptor";
 
 export const getRoleList = createAsyncThunk("role/roleFetch", async () => {
   try {
@@ -21,5 +22,6 @@ const rollSlice = createSlice({
     }),
   ],
 });
+axiosInterceptor()
 
 export default rollSlice.reducer;
