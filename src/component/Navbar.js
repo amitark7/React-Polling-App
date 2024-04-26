@@ -1,23 +1,32 @@
 import React, { useEffect, useState } from "react";
 import { FaUserCircle } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FaBars } from "react-icons/fa";
 import navbarData from "../utils/navbarData.json";
 import { ADMIN_ID } from "../utils/constantData";
+import { useSelector } from "react-redux";
 
-const Navbar = ({ onLogout }) => {
-  const [userData, setUserData] = useState({});
-  const [showProfile, setShowProfile] = useState(false);
+const Navbar = () => {
+  const [userData, setUserData] = useState(null);
+  const [showLogoutBtn, setShowLogoutBtn] = useState(false);
   const [showNavbarMenu, setShowNavbarMenu] = useState(false);
+  const user = useSelector((state) => state.auth.user);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("user"));
-    if (user) {
-      setUserData(user);
+    const logiUserData = JSON.parse(localStorage.getItem("user"));
+    if (logiUserData) {
+      setUserData(logiUserData);
     }
-  }, []);
+  }, [user]);
 
-  return (
+  const onLogout = () => {
+    localStorage.clear();
+    setUserData(null);
+    navigate("/");
+  };
+
+  return userData && userData?.id ? (
     <div className="relative">
       <div className="flex justify-between items-center px-4 sm:px-8 md:px-10 py-2 bg-black text-white">
         <div className="md:hidden block text-xl">
@@ -29,7 +38,7 @@ const Navbar = ({ onLogout }) => {
           } w-full md:pb-0 md:static flex-col md:flex md:flex-row gap-3 text-[14px] md:text-lg font-semibold cursor-pointer md:items-center`}
           onClick={() => {
             setShowNavbarMenu(false);
-            setShowProfile(false);
+            setShowLogoutBtn(false);
           }}
         >
           <li>
@@ -50,7 +59,7 @@ const Navbar = ({ onLogout }) => {
         <div
           className="flex items-center relative gap-2"
           onClick={() => {
-            setShowProfile(!showProfile);
+            setShowLogoutBtn(!showLogoutBtn);
             setShowNavbarMenu(false);
           }}
         >
@@ -61,7 +70,7 @@ const Navbar = ({ onLogout }) => {
               <p className="text-xs md:text-base">{userData.email}</p>
             </div>
           </div>
-          {showProfile && (
+          {showLogoutBtn && (
             <div className="absolute left-[0%] w-full top-[116%] flex text-black flex-col font-semibold bg-red-500 shadow-md rounded">
               <button
                 onClick={() => onLogout()}
@@ -74,6 +83,8 @@ const Navbar = ({ onLogout }) => {
         </div>
       </div>
     </div>
+  ) : (
+    <></>
   );
 };
 
