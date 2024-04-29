@@ -5,9 +5,9 @@ import UserList from "./pages/UserList";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import PollsPage from "./pages/PollsPage";
-import AddPoll from "./pages/AddPoll";
 import NotFound from "./pages/NotFound";
 import PrivateRoute from "./utils/PrivateRoute";
+import AddEditPoll from "./pages/AddEditPoll";
 
 function App() {
   return (
@@ -28,7 +28,15 @@ function App() {
         />
         <Route
           path="/addPoll"
-          element={<PrivateRoute Component={AddPoll} redirectTo="/addPoll" />}
+          element={
+            <PrivateRoute Component={AddEditPoll} redirectTo="/addPoll" />
+          }
+        />
+        <Route
+          path="/editPoll/:id"
+          element={
+            <PrivateRoute Component={AddEditPoll} redirectTo="/editPoll" />
+          }
         />
         <Route
           path="/createUser"

@@ -1,10 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { FaTrashAlt, FaEdit, FaEye } from "react-icons/fa";
 import { ADMIN_ID } from "../utils/constantData";
+import { Link } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { votedPollOption } from "../redux/reducer/pollListReducer";
 
-const PollItem = ({ poll }) => {
+const PollItem = ({ poll, viewPollVoteChart, showDeleteModal }) => {
   const [userData, setUserData] = useState({});
   const [selectedOption, setSelectedOption] = useState(null);
+  const [voted, setVoted] = useState(
+    JSON.parse(localStorage.getItem(`poll_${poll.title}`)) || false
+  );
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"));
@@ -14,52 +22,59 @@ const PollItem = ({ poll }) => {
   }, []);
 
   useEffect(() => {
-    const votedStatus = JSON.parse(localStorage.getItem(`poll_${poll.title}`)) || false;
+    const votedStatus =
+      JSON.parse(localStorage.getItem(`poll_${poll.title}`)) || false;
     if (votedStatus) {
-      const votedOption = JSON.parse(localStorage.getItem(`poll_${poll.title}_option`));
+      const votedOption = JSON.parse(
+        localStorage.getItem(`poll_${poll.title}_option`)
+      );
       setSelectedOption(votedOption);
     }
   }, [poll.title]);
 
-  const handleOptionChange = (e) => {
-    setSelectedOption(e.target.value);
-  };
-
-  const [voted, setVoted] = useState(
-    JSON.parse(localStorage.getItem(`poll_${poll.title}`)) || false
-  );
-
-  const handleVote = (e) => {
+  const submitVote = (e) => {
     e.preventDefault();
     if (!voted) {
       localStorage.setItem(`poll_${poll.title}`, JSON.stringify(true));
-      localStorage.setItem(`poll_${poll.title}_option`, JSON.stringify(selectedOption));
+      localStorage.setItem(
+        `poll_${poll.title}_option`,
+        JSON.stringify(selectedOption)
+      );
+      dispatch(votedPollOption(selectedOption));
       setVoted(true);
     }
   };
 
   return (
-    <div className="w-[70%] mx-auto mt-8 p-8 bg-gray-100 rounded shadow-lg">
-      <div className="flex justify-between items-center mb-4">
+    <div className="w-[70%] mx-auto mt-8 p-3 md:p-8 bg-gray-100 rounded shadow-lg">
+      <div className="flex justify-between flex-col  gap-2 sm:flex-row items-center mb-4">
         <h2 className="text-xl font-semibold">{poll.title}</h2>
         {userData.roleId === ADMIN_ID && (
           <div className="flex gap-4">
-            <FaTrashAlt className="text-red-500 cursor-pointer" />
-            <FaEdit className="text-blue-500 cursor-pointer" />
-            <FaEye className="text-green-500 cursor-pointer" />
+            <FaTrashAlt
+              onClick={() => showDeleteModal(poll)}
+              className="text-red-500 cursor-pointer"
+            />
+            <Link to={`/editpoll/${poll.id}`}>
+              <FaEdit className="text-blue-500 cursor-pointer" />
+            </Link>
+            <FaEye
+              onClick={() => viewPollVoteChart(poll)}
+              className="text-green-500 cursor-pointer"
+            />
           </div>
         )}
       </div>
-      <form onSubmit={handleVote}>
+      <form onSubmit={submitVote}>
         {poll.optionList?.map((option, index) => (
           <div key={index} className="mb-2">
             <input
               type="radio"
               id={`option${index}`}
               name="pollOption"
-              value={option.optionTitle}
-              checked={option.optionTitle === selectedOption}
-              onChange={handleOptionChange}
+              value={option.id}
+              checked={option.id === selectedOption}
+              onChange={() => setSelectedOption(option.id)}
               disabled={voted}
             />
             <label htmlFor={`option${index}`} className="ml-2">
