@@ -23,8 +23,9 @@ const PollItem = ({ poll, viewPollVoteChart, showDeleteModal }) => {
   }, []);
 
   useEffect(() => {
-    const votedStatus = JSON.parse(localStorage.getItem("VotedOptions")) || [];
-    const userVotedOption = votedStatus.find(
+    const votedPollStatus =
+      JSON.parse(localStorage.getItem("VotedPollsOptions")) || [];
+    const userVotedOption = votedPollStatus.find(
       (option) => option.pollId === poll.id
     );
     if (userVotedOption) {
@@ -36,12 +37,16 @@ const PollItem = ({ poll, viewPollVoteChart, showDeleteModal }) => {
   const submitVote = (e) => {
     e.preventDefault();
     if (!voted && selectedOption) {
-      let votedStatus = JSON.parse(localStorage.getItem("VotedOptions")) || [];
+      let votedPollStatus =
+        JSON.parse(localStorage.getItem("VotedPollsOptions")) || [];
       const newVotedOptions = [
-        ...votedStatus,
+        ...votedPollStatus,
         { pollId: poll.id, optionId: selectedOption },
       ];
-      localStorage.setItem("VotedOptions", JSON.stringify(newVotedOptions));
+      localStorage.setItem(
+        "VotedPollsOptions",
+        JSON.stringify(newVotedOptions)
+      );
       dispatch(votedPollOption(selectedOption));
       setVoted(true);
     }
