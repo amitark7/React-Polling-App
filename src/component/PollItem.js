@@ -23,28 +23,27 @@ const PollItem = ({ poll, viewPollVoteChart, showDeleteModal }) => {
   }, []);
 
   useEffect(() => {
-    const votedStatus =
-      JSON.parse(localStorage.getItem(`poll_${poll.title}`)) || false;
-    if (votedStatus) {
-      const votedOption = JSON.parse(
-        localStorage.getItem(`poll_${poll.title}_option`)
-      );
-      setSelectedOption(votedOption);
+    const votedStatus = JSON.parse(localStorage.getItem("VotedOptions")) || [];
+    const userVotedOption = votedStatus.find(
+      (option) => option.pollId === poll.id
+    );
+    if (userVotedOption) {
+      setSelectedOption(userVotedOption.optionId);
+      setVoted(true);
     }
-  }, [poll.title]);
+  }, [poll.id]);
 
   const submitVote = (e) => {
     e.preventDefault();
-    if (!voted) {
-      localStorage.setItem(`poll_${poll.title}`, JSON.stringify(true));
-      localStorage.setItem(
-        `poll_${poll.title}_option`,
-        JSON.stringify(selectedOption)
-      );
-      if (selectedOption) {
-        dispatch(votedPollOption(selectedOption));
-        setVoted(true);
-      }
+    if (!voted && selectedOption) {
+      let votedStatus = JSON.parse(localStorage.getItem("VotedOptions")) || [];
+      const newVotedOptions = [
+        ...votedStatus,
+        { pollId: poll.id, optionId: selectedOption },
+      ];
+      localStorage.setItem("VotedOptions", JSON.stringify(newVotedOptions));
+      dispatch(votedPollOption(selectedOption));
+      setVoted(true);
     }
   };
 
