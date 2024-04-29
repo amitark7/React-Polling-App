@@ -11,6 +11,7 @@ import ConfimationModal from "../component/ConfimationModal";
 
 const PollsPage = () => {
   const [pageNumber, setPageNumber] = useState(1);
+  const [polls, setPolls] = useState([]);
   const { pollList, loading } = useSelector((state) => state.pollList);
   const [chartData, setChartData] = useState({
     labels: [],
@@ -49,6 +50,14 @@ const PollsPage = () => {
     dispatch(getPollList(pageNumber));
   }, [dispatch, pageNumber]);
 
+  useEffect(() => {
+    if (pageNumber === 1) {
+      setPolls(pollList);
+    } else {
+      setPolls([...polls, ...pollList]);
+    }
+  }, [pollList]);
+
   const showDeleteModal = (poll) => {
     setSelectedPoll(poll);
     setShowDeletedModal(true);
@@ -58,12 +67,12 @@ const PollsPage = () => {
     dispatch(deleteSinglePoll(selectedPoll.id));
     setShowDeletedModal(false);
     setSelectedPoll(null);
-    dispatch(getPollList(pageNumber));
+    setPolls(polls.filter((poll) => poll.id !== selectedPoll.id));
   };
 
   return (
     <div>
-      {pollList?.map((poll, index) => {
+      {polls?.map((poll, index) => {
         return (
           <PollItem
             key={index}
@@ -73,14 +82,18 @@ const PollsPage = () => {
           />
         );
       })}
-      {pollList?.length % 10 === 0 && (
-        <button
-          onClick={() => setPageNumber((prevPageNumber) => prevPageNumber + 1)}
-          className="mx-auto w-[120px] py-2 ml-[15%] mt-10 px-4 bg-blue-400 rounded-md mb-10"
-          disabled={loading}
-        >
-          {loading ? "Loading..." : "Load More"}
-        </button>
+      {polls?.length % 10 === 0 && (
+        <div className="text-center">
+          <button
+            onClick={() =>
+              setPageNumber((prevPageNumber) => prevPageNumber + 1)
+            }
+            className="mx-auto w-[120px] py-2 mt-10 px-4 bg-blue-400 rounded-md mb-10"
+            disabled={loading}
+          >
+            {loading ? "Loading..." : "Load More"}
+          </button>
+        </div>
       )}
       {showPollChart && (
         <div className="fixed inset-0 flex justify-center items-center z-10">
@@ -102,6 +115,7 @@ const PollsPage = () => {
           modalTitle={"Delete"}
           modalSubTitle={"Are You Sure? you want delete this item "}
           onBtnOkClick={deletePoll}
+          btnColor={"bg-red-500"}
         />
       )}
     </div>

@@ -41,8 +41,10 @@ const PollItem = ({ poll, viewPollVoteChart, showDeleteModal }) => {
         `poll_${poll.title}_option`,
         JSON.stringify(selectedOption)
       );
-      dispatch(votedPollOption(selectedOption));
-      setVoted(true);
+      if (selectedOption) {
+        dispatch(votedPollOption(selectedOption));
+        setVoted(true);
+      }
     }
   };
 
@@ -85,7 +87,11 @@ const PollItem = ({ poll, viewPollVoteChart, showDeleteModal }) => {
         ))}
         <button
           type="submit"
-          className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-200"
+          className={`w-full ${
+            voted ? "bg-gray-400" : "bg-blue-500"
+          } text-white py-2 px-4 rounded ${
+            !voted && "hover:bg-blue-600"
+          } transition duration-200`}
           disabled={voted}
         >
           {voted ? "Voted" : "Submit"}
