@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { FaTrashAlt, FaEdit, FaEye } from "react-icons/fa";
+import { FaTrashAlt, FaEdit } from "react-icons/fa";
+import { IoBarChart } from "react-icons/io5";
 import { ADMIN_ID } from "../utils/constantData";
 import { Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
@@ -58,7 +59,7 @@ const PollItem = ({ poll, viewPollVoteChart, showDeleteModal }) => {
             <Link to={`/editpoll/${poll.id}`}>
               <FaEdit className="text-blue-500 cursor-pointer" />
             </Link>
-            <FaEye
+            <IoBarChart
               onClick={() => viewPollVoteChart(poll)}
               className="text-green-500 cursor-pointer"
             />
