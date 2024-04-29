@@ -9,7 +9,7 @@ export const getPollList = createAsyncThunk(
       const response = await axios.get(
         `${process.env.REACT_APP_BASE_URL}poll/list/${pageNumber}?limit=10`
       );
-      return response;
+      return response.data.rows;
     } catch (error) {
       return error.response;
     }
@@ -57,7 +57,7 @@ const pollSlice = createSlice({
     });
     builder.addCase(getPollList.fulfilled, (state, action) => {
       state.loading = false;
-      state.pollList = action.payload?.data.rows;
+      state.pollList = action.payload;
     });
     builder.addCase(getPollList.rejected, (state) => {
       state.loading = false;

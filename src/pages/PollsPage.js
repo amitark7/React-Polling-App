@@ -8,6 +8,7 @@ import {
 import { Chart as ChartJS } from "chart.js/auto";
 import { Bar } from "react-chartjs-2";
 import ConfimationModal from "../component/ConfimationModal";
+import { ClipLoader, MoonLoader } from "react-spinners";
 
 const PollsPage = () => {
   const [pageNumber, setPageNumber] = useState(1);
@@ -70,7 +71,11 @@ const PollsPage = () => {
     setPolls(polls.filter((poll) => poll.id !== selectedPoll.id));
   };
 
-  return (
+  return loading ? (
+    <div className="text-center mx-auto w-full mt-10">
+      <ClipLoader size={60} color="#36d7b7" />
+    </div>
+  ) : (
     <div>
       {polls?.map((poll, index) => {
         return (
@@ -82,19 +87,18 @@ const PollsPage = () => {
           />
         );
       })}
-      {polls?.length % 10 === 0 && (
-        <div className="text-center">
-          <button
-            onClick={() =>
-              setPageNumber((prevPageNumber) => prevPageNumber + 1)
-            }
-            className="mx-auto w-[120px] py-2 mt-10 px-4 bg-blue-400 rounded-md mb-10"
-            disabled={loading}
-          >
-            {loading ? "Loading..." : "Load More"}
-          </button>
-        </div>
-      )}
+      <div className="text-center">
+        <button
+          onClick={() => setPageNumber((prevPageNumber) => prevPageNumber + 1)}
+          className={`mx-auto w-[120px] py-2 mt-10 px-4 ${
+            loading ? "bg-gray-400" : "bg-blue-400"
+          } rounded-md mb-10`}
+          disabled={loading}
+        >
+          Load More
+        </button>
+      </div>
+
       {showPollChart && (
         <div className="fixed inset-0 flex justify-center items-center z-10">
           <div
