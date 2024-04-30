@@ -33,15 +33,19 @@ const PollsPage = () => {
   }, [pollList]);
 
   const increaseVoteCount = (pollId, optionId) => {
-    const updatedPolls = polls.map((poll) => {
+    console.log(pollId, optionId);
+    const updatedPolls = polls?.map((poll) => {
       if (poll.id === pollId) {
-        const updatedOptions = poll.options.map((option) => {
+        const updatedOptions = poll.optionList?.map((option) => {
           if (option.id === optionId) {
-            return { ...option, voteCount: option.voteCount + 1 };
+            return {
+              ...option,
+              voteCount: [...option.voteCount, { optionId }],
+            };
           }
           return option;
         });
-        return { ...poll, options: updatedOptions };
+        return { ...poll, optionList: updatedOptions };
       }
       return poll;
     });
