@@ -48,7 +48,7 @@ const PollsPage = () => {
     setPolls(polls.filter((poll) => poll.id !== selectedPoll.id));
   };
 
-  return pollList.length === 0 ? (
+  return pollList?.length === 0 ? (
     <div className="text-center mx-auto w-full mt-10">
       <div className="inline-block h-10 w-10 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] text-secondary motion-reduce:animate-[spin_1.5s_linear_infinite]"></div>
     </div>

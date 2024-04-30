@@ -43,56 +43,58 @@ const PollItem = ({ poll, showPollChartModal, showDeleteModal }) => {
   };
 
   return (
-    <div className="w-[80%] sm:w-[48%] lg:w-[32%] 2xl:w-[24%] mt-8 p-3 md:p-8 min-h-[300px] bg-gray-100 rounded shadow-lg">
-      <div className="flex flex-col gap-2 items-center mb-4">
-        <h2 className="text-xl font-semibold">{poll.title}</h2>
-        {user?.roleId === ADMIN_ID && (
-          <div className="flex gap-4">
-            <FaTrashAlt
-              onClick={() => showDeleteModal(poll)}
-              className="text-red-500 cursor-pointer"
-            />
-            <Link to={`/editpoll/${poll.id}`}>
-              <FaEdit className="text-blue-500 cursor-pointer" />
-            </Link>
-            <IoBarChart
-              onClick={() => showPollChartModal(poll)}
-              className="text-green-500 cursor-pointer"
-            />
-          </div>
-        )}
-      </div>
-      <form onSubmit={submitVote}>
-        {poll.optionList?.map((option, index) => (
-          <div key={index} className="mb-2">
-            <input
-              type="radio"
-              id={`option${index}`}
-              name="pollOption"
-              value={option.id}
-              checked={option.id === selectedOption}
-              onChange={() => setSelectedOption(option.id)}
-              disabled={voted}
-            />
-            <label htmlFor={`option${index}`} className="ml-2">
-              {option.optionTitle}
-            </label>
-          </div>
-        ))}
-        <div className="mx-auto w-full">
-          <button
-            type="submit"
-            className={`w-full ${
-              voted ? "bg-gray-400" : "bg-blue-500"
-            } text-white mt-5  py-2 px-4 rounded ${
-              !voted && "hover:bg-blue-600"
-            } transition duration-200`}
-            disabled={voted}
-          >
-            {voted ? "Voted" : "Submit"}
-          </button>
+    <div className="w-[80%] sm:w-[48%] lg:w-[32%] 2xl:w-[24%] mt-8 min-h-[300px] bg-gray-100 rounded shadow-lg">
+      {user?.roleId === ADMIN_ID && (
+        <div className="flex gap-4 justify-end my-4 mr-2">
+          <FaTrashAlt
+            onClick={() => showDeleteModal(poll)}
+            className="text-red-500 cursor-pointer"
+          />
+          <Link to={`/editpoll/${poll.id}`}>
+            <FaEdit className="text-blue-500 cursor-pointer" />
+          </Link>
+          <IoBarChart
+            onClick={() => showPollChartModal(poll)}
+            className="text-green-500 cursor-pointer"
+          />
         </div>
-      </form>
+      )}
+      <div className="px-3 pb-2 md:px-8 md:pb-8">
+        <div className="flex flex-col gap-2 text-justify items-center mb-4">
+          <h2 className="text-xl font-semibold">{poll.title}</h2>
+        </div>
+        <form onSubmit={submitVote}>
+          {poll.optionList?.map((option, index) => (
+            <div key={index} className="mb-2">
+              <input
+                type="radio"
+                id={`option${index}`}
+                name="pollOption"
+                value={option.id}
+                checked={option.id === selectedOption}
+                onChange={() => setSelectedOption(option.id)}
+                disabled={voted}
+              />
+              <label htmlFor={`option${index}`} className="ml-2">
+                {option.optionTitle}
+              </label>
+            </div>
+          ))}
+          <div className="mx-auto w-full">
+            <button
+              type="submit"
+              className={`w-full ${
+                voted ? "bg-gray-400" : "bg-blue-500"
+              } text-white mt-5  py-2 px-4 rounded ${
+                !voted && "hover:bg-blue-600"
+              } transition duration-200`}
+              disabled={voted}
+            >
+              {voted ? "Voted" : "Submit"}
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };
