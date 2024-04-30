@@ -11,7 +11,7 @@ import ChartModal from "../component/ChartModal";
 const PollsPage = () => {
   const [pageNumber, setPageNumber] = useState(1);
   const [polls, setPolls] = useState([]);
-  const { pollList, loading, votedStatus } = useSelector(
+  const { pollList, loading, votedStatus, pollListLength } = useSelector(
     (state) => state.pollList
   );
   const [showPollChart, setShowPollChart] = useState(false);
@@ -22,7 +22,7 @@ const PollsPage = () => {
   useEffect(() => {
     dispatch(getPollList(pageNumber));
   }, [dispatch, pageNumber, votedStatus]);
-
+  console.log(pollListLength);
   useEffect(() => {
     if (pageNumber === 1) {
       setPolls(pollList);
@@ -70,9 +70,9 @@ const PollsPage = () => {
         <button
           onClick={() => setPageNumber((prevPageNumber) => prevPageNumber + 1)}
           className={`mx-auto w-[120px] py-2 mt-10 px-4 ${
-            loading ? "bg-gray-400" : "bg-blue-400"
+            pollListLength !== 10 ? "bg-gray-400" : "bg-blue-400"
           } rounded-md mb-10`}
-          disabled={loading}
+          disabled={pollListLength !== 10}
         >
           Load More
         </button>
