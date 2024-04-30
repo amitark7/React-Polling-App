@@ -22,7 +22,7 @@ const PollsPage = () => {
   useEffect(() => {
     dispatch(getPollList(pageNumber));
   }, [dispatch, pageNumber, votedStatus]);
-  console.log(pollListLength);
+
   useEffect(() => {
     if (pageNumber === 1) {
       setPolls(pollList);
