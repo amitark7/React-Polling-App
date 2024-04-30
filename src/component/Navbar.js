@@ -1,32 +1,29 @@
 import React, { useEffect, useState } from "react";
 import { FaUserCircle } from "react-icons/fa";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { FaBars } from "react-icons/fa";
 import navbarData from "../utils/navbarData.json";
 import { ADMIN_ID } from "../utils/constantData";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { getUser, onLogout } from "../redux/reducer/authReducer";
 
 const Navbar = () => {
-  const [userData, setUserData] = useState(null);
   const [showLogoutBtn, setShowLogoutBtn] = useState(false);
   const [showNavbarMenu, setShowNavbarMenu] = useState(false);
   const user = useSelector((state) => state.auth.user);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    const logiUserData = JSON.parse(localStorage.getItem("user"));
-    if (logiUserData) {
-      setUserData(logiUserData);
-    }
-  }, [user]);
+    dispatch(getUser());
+  }, []);
 
-  const onLogout = () => {
-    localStorage.clear();
-    setUserData(null);
+  const onLogoutClick = () => {
+    dispatch(onLogout());
     navigate("/");
   };
 
-  return userData && userData?.id ? (
+  return user && user?.id ? (
     <div className="relative">
       <div className="flex justify-between items-center px-4 sm:px-8 md:px-10 py-2 bg-black text-white">
         <div className="md:hidden block text-xl">
@@ -42,15 +39,28 @@ const Navbar = () => {
           }}
         >
           <li>
-            <Link to={"/polling"}>Polls</Link>
+            <NavLink
+              className={({ isActive }) =>
+                isActive ? "text-white" : "text-gray-500"
+              }
+              to={"/polling"}
+            >
+              Polls
+            </NavLink>
           </li>
-          {userData.roleId === ADMIN_ID && (
+          {user.roleId === ADMIN_ID && (
             <>
               {navbarData.map((item, index) => {
                 return (
-                  <Link key={index} to={item.path}>
+                  <NavLink
+                    className={({ isActive }) =>
+                      isActive ? "text-white" : "text-gray-500"
+                    }
+                    key={index}
+                    to={item.path}
+                  >
                     {item.name}
-                  </Link>
+                  </NavLink>
                 );
               })}
             </>
@@ -66,14 +76,14 @@ const Navbar = () => {
           <div className="text-3xl flex gap-2 items-center md:text-4xl cursor-pointer">
             <FaUserCircle />
             <div>
-              <h1 className="text-xs md:text-base">{`${userData.firstName} ${userData.lastName}`}</h1>
-              <p className="text-xs md:text-base">{userData.email}</p>
+              <h1 className="text-xs md:text-base">{`${user?.firstName} ${user?.lastName}`}</h1>
+              <p className="text-xs md:text-base">{user?.email}</p>
             </div>
           </div>
           {showLogoutBtn && (
             <div className="absolute left-[0%] w-full top-[116%] flex text-black flex-col font-semibold bg-red-500 shadow-md rounded">
               <button
-                onClick={() => onLogout()}
+                onClick={() => onLogoutClick()}
                 className="rounded-md p-3 mr-2 text-xs md:text-lg"
               >
                 Logout

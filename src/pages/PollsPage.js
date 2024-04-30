@@ -5,48 +5,17 @@ import {
   deleteSinglePoll,
   getPollList,
 } from "../redux/reducer/pollListReducer";
-
 import ConfimationModal from "../component/ConfimationModal";
-import { ClipLoader, MoonLoader } from "react-spinners";
 import ChartModal from "../component/ChartModal";
 
 const PollsPage = () => {
   const [pageNumber, setPageNumber] = useState(1);
   const [polls, setPolls] = useState([]);
   const { pollList, loading } = useSelector((state) => state.pollList);
-  const [chartData, setChartData] = useState({
-    labels: [],
-    datasets: [
-      {
-        label: "",
-        data: [],
-        backgroundColor: "rgb(0, 137, 167)",
-        borderWidth: 1,
-      },
-    ],
-  });
   const [showPollChart, setShowPollChart] = useState(false);
   const [showDeletedModal, setShowDeletedModal] = useState(false);
   const [selectedPoll, setSelectedPoll] = useState(null);
   const dispatch = useDispatch();
-
-  const viewPollVoteChart = (pollData) => {
-    const optionList = pollData.optionList.map(
-      ({ optionTitle, voteCount }) => ({ optionTitle, voteCount })
-    );
-    const labels = optionList.map((items) => items.optionTitle);
-    setChartData({
-      labels: labels,
-      datasets: [
-        {
-          label: pollData.title,
-          data: optionList.map((items) => items.voteCount.length),
-          backgroundColor: "rgb(0, 137, 167)",
-        },
-      ],
-    });
-    setShowPollChart(true);
-  };
 
   useEffect(() => {
     dispatch(getPollList(pageNumber));
@@ -59,6 +28,11 @@ const PollsPage = () => {
       setPolls([...polls, ...pollList]);
     }
   }, [pollList]);
+
+  const showPollChartModal = (poll) => {
+    setShowPollChart(true);
+    setSelectedPoll(poll);
+  };
 
   const showDeleteModal = (poll) => {
     setSelectedPoll(poll);
@@ -74,7 +48,7 @@ const PollsPage = () => {
 
   return loading ? (
     <div className="text-center mx-auto w-full mt-10">
-      <ClipLoader size={60} color="#36d7b7" />
+      <div className="inline-block h-10 w-10 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] text-secondary motion-reduce:animate-[spin_1.5s_linear_infinite]"></div>
     </div>
   ) : (
     <div>
@@ -83,7 +57,7 @@ const PollsPage = () => {
           <PollItem
             key={index}
             poll={poll}
-            viewPollVoteChart={viewPollVoteChart}
+            showPollChartModal={showPollChartModal}
             showDeleteModal={showDeleteModal}
           />
         );
@@ -101,7 +75,7 @@ const PollsPage = () => {
       </div>
 
       {showPollChart && (
-        <ChartModal data={chartData} setShowPollChart={setShowPollChart} />
+        <ChartModal data={selectedPoll} setShowPollChart={setShowPollChart} />
       )}
       {showDeletedModal && (
         <ConfimationModal

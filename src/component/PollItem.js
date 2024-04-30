@@ -3,33 +3,26 @@ import { FaTrashAlt, FaEdit } from "react-icons/fa";
 import { IoBarChart } from "react-icons/io5";
 import { ADMIN_ID } from "../utils/constantData";
 import { Link } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { votedPollOption } from "../redux/reducer/pollListReducer";
+import { getUser } from "../redux/reducer/authReducer";
 
-const PollItem = ({ poll, viewPollVoteChart, showDeleteModal }) => {
-  const [userData, setUserData] = useState({});
+const PollItem = ({ poll, showPollChartModal, showDeleteModal }) => {
   const [selectedOption, setSelectedOption] = useState(null);
-  const [voted, setVoted] = useState(
-    JSON.parse(localStorage.getItem(`poll_${poll.title}`)) || false
-  );
-
+  const [voted, setVoted] = useState(false);
+  const { user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("user"));
-    if (user) {
-      setUserData(user);
-    }
+    dispatch(getUser());
   }, []);
 
   useEffect(() => {
     const votedPollStatus =
-      JSON.parse(localStorage.getItem("VotedPollsOptions")) || [];
-    const userVotedOption = votedPollStatus.find(
-      (option) => option.pollId === poll.id
-    );
+      JSON.parse(localStorage.getItem("VotedPollsOptions")) || {};
+    const userVotedOption = votedPollStatus[poll.id];
     if (userVotedOption) {
-      setSelectedOption(userVotedOption.optionId);
+      setSelectedOption(userVotedOption);
       setVoted(true);
     }
   }, [poll.id]);
@@ -37,15 +30,12 @@ const PollItem = ({ poll, viewPollVoteChart, showDeleteModal }) => {
   const submitVote = (e) => {
     e.preventDefault();
     if (!voted && selectedOption) {
-      let votedPollStatus =
-        JSON.parse(localStorage.getItem("VotedPollsOptions")) || [];
-      const newVotedOptions = [
-        ...votedPollStatus,
-        { pollId: poll.id, optionId: selectedOption },
-      ];
+      const votedPollStatus =
+        JSON.parse(localStorage.getItem("VotedPollsOptions")) || {};
+      votedPollStatus[poll.id] = selectedOption;
       localStorage.setItem(
         "VotedPollsOptions",
-        JSON.stringify(newVotedOptions)
+        JSON.stringify(votedPollStatus)
       );
       dispatch(votedPollOption(selectedOption));
       setVoted(true);
@@ -53,10 +43,10 @@ const PollItem = ({ poll, viewPollVoteChart, showDeleteModal }) => {
   };
 
   return (
-    <div className="w-[70%] mx-auto mt-8 p-3 md:p-8 bg-gray-100 rounded shadow-lg">
+    <div className="w-[50%] mx-auto mt-8 p-3 md:p-8 bg-gray-100 rounded shadow-lg">
       <div className="flex justify-between flex-col  gap-2 sm:flex-row items-center mb-4">
         <h2 className="text-xl font-semibold">{poll.title}</h2>
-        {userData.roleId === ADMIN_ID && (
+        {user?.roleId === ADMIN_ID && (
           <div className="flex gap-4">
             <FaTrashAlt
               onClick={() => showDeleteModal(poll)}
@@ -66,7 +56,7 @@ const PollItem = ({ poll, viewPollVoteChart, showDeleteModal }) => {
               <FaEdit className="text-blue-500 cursor-pointer" />
             </Link>
             <IoBarChart
-              onClick={() => viewPollVoteChart(poll)}
+              onClick={() => showPollChartModal(poll)}
               className="text-green-500 cursor-pointer"
             />
           </div>
@@ -89,17 +79,19 @@ const PollItem = ({ poll, viewPollVoteChart, showDeleteModal }) => {
             </label>
           </div>
         ))}
-        <button
-          type="submit"
-          className={`w-full ${
-            voted ? "bg-gray-400" : "bg-blue-500"
-          } text-white py-2 px-4 rounded ${
-            !voted && "hover:bg-blue-600"
-          } transition duration-200`}
-          disabled={voted}
-        >
-          {voted ? "Voted" : "Submit"}
-        </button>
+        <div className="mx-auto w-[40%]">
+          <button
+            type="submit"
+            className={`w-full ${
+              voted ? "bg-gray-400" : "bg-blue-500"
+            } text-white mt-5  py-2 px-4 rounded ${
+              !voted && "hover:bg-blue-600"
+            } transition duration-200`}
+            disabled={voted}
+          >
+            {voted ? "Voted" : "Submit"}
+          </button>
+        </div>
       </form>
     </div>
   );
