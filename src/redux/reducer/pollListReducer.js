@@ -52,7 +52,6 @@ const pollSlice = createSlice({
   initialState: {
     pollList: [],
     loading: true,
-    votedStatus: false,
     pollListLength: 0,
   },
   reducers: {},
@@ -67,12 +66,6 @@ const pollSlice = createSlice({
     });
     builder.addCase(getPollList.rejected, (state) => {
       state.loading = false;
-    });
-    builder.addCase(votedPollOption.pending, (state) => {
-      state.votedStatus = false;
-    });
-    builder.addCase(votedPollOption.fulfilled, (state) => {
-      state.votedStatus = true;
     });
   },
 });

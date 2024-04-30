@@ -7,7 +7,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { votedPollOption } from "../redux/reducer/pollListReducer";
 import { getUser } from "../redux/reducer/authReducer";
 
-const PollItem = ({ poll, showPollChartModal, showDeleteModal }) => {
+const PollItem = ({
+  poll,
+  showPollChartModal,
+  increaseVoteCount,
+  showDeleteModal,
+}) => {
   const [selectedOption, setSelectedOption] = useState(null);
   const [voted, setVoted] = useState(false);
   const { user } = useSelector((state) => state.auth);
@@ -37,7 +42,7 @@ const PollItem = ({ poll, showPollChartModal, showDeleteModal }) => {
         "VotedPollsOptions",
         JSON.stringify(votedPollStatus)
       );
-      dispatch(votedPollOption(selectedOption));
+      increaseVoteCount(poll.id, selectedOption);
       setVoted(true);
     }
   };

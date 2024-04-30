@@ -4,6 +4,7 @@ import PollItem from "../component/PollItem";
 import {
   deleteSinglePoll,
   getPollList,
+  votedPollOption,
 } from "../redux/reducer/pollListReducer";
 import ConfimationModal from "../component/ConfimationModal";
 import ChartModal from "../component/ChartModal";
@@ -11,7 +12,7 @@ import ChartModal from "../component/ChartModal";
 const PollsPage = () => {
   const [pageNumber, setPageNumber] = useState(1);
   const [polls, setPolls] = useState([]);
-  const { pollList, loading, votedStatus, pollListLength } = useSelector(
+  const { pollList, loading, pollListLength } = useSelector(
     (state) => state.pollList
   );
   const [showPollChart, setShowPollChart] = useState(false);
@@ -21,7 +22,7 @@ const PollsPage = () => {
 
   useEffect(() => {
     dispatch(getPollList(pageNumber));
-  }, [dispatch, pageNumber, votedStatus]);
+  }, [dispatch, pageNumber]);
 
   useEffect(() => {
     if (pageNumber === 1) {
@@ -30,6 +31,23 @@ const PollsPage = () => {
       setPolls([...polls, ...pollList]);
     }
   }, [pollList]);
+
+  const increaseVoteCount = (pollId, optionId) => {
+    const updatedPolls = polls.map((poll) => {
+      if (poll.id === pollId) {
+        const updatedOptions = poll.options.map((option) => {
+          if (option.id === optionId) {
+            return { ...option, voteCount: option.voteCount + 1 };
+          }
+          return option;
+        });
+        return { ...poll, options: updatedOptions };
+      }
+      return poll;
+    });
+    setPolls(updatedPolls);
+    dispatch(votedPollOption(optionId));
+  };
 
   const showPollChartModal = (poll) => {
     setShowPollChart(true);
@@ -62,20 +80,29 @@ const PollsPage = () => {
               poll={poll}
               showPollChartModal={showPollChartModal}
               showDeleteModal={showDeleteModal}
+              increaseVoteCount={increaseVoteCount}
             />
           );
         })}
       </div>
       <div className="text-center">
-        <button
-          onClick={() => setPageNumber((prevPageNumber) => prevPageNumber + 1)}
-          className={`mx-auto w-[120px] py-2 mt-10 px-4 ${
-            pollListLength !== 10 ? "bg-gray-400" : "bg-blue-400"
-          } rounded-md mb-10`}
-          disabled={pollListLength !== 10}
-        >
-          Load More
-        </button>
+        {!loading ? (
+          <button
+            onClick={() =>
+              setPageNumber((prevPageNumber) => prevPageNumber + 1)
+            }
+            className={`mx-auto w-[120px] py-2 mt-10 px-4 ${
+              pollListLength !== 10 ? "bg-gray-400" : "bg-blue-400"
+            } rounded-md mb-10`}
+            disabled={pollListLength !== 10}
+          >
+            Load More
+          </button>
+        ) : (
+          <div className="text-center mx-auto w-full mt-10">
+            <div className="inline-block h-10 w-10 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] text-secondary motion-reduce:animate-[spin_1.5s_linear_infinite]"></div>
+          </div>
+        )}
       </div>
 
       {showPollChart && (
