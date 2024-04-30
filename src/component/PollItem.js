@@ -43,7 +43,7 @@ const PollItem = ({ poll, showPollChartModal, showDeleteModal }) => {
   };
 
   return (
-    <div className="w-[50%] mx-auto mt-8 p-3 md:p-8 bg-gray-100 rounded shadow-lg">
+    <div className="w-[80%] md:w-[60%] sm:w-[70%] lg:w-[50%] mx-auto mt-8 p-3 md:p-8 bg-gray-100 rounded shadow-lg">
       <div className="flex justify-between flex-col  gap-2 sm:flex-row items-center mb-4">
         <h2 className="text-xl font-semibold">{poll.title}</h2>
         {user?.roleId === ADMIN_ID && (
