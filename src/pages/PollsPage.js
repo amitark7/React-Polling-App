@@ -11,7 +11,9 @@ import ChartModal from "../component/ChartModal";
 const PollsPage = () => {
   const [pageNumber, setPageNumber] = useState(1);
   const [polls, setPolls] = useState([]);
-  const { pollList, loading } = useSelector((state) => state.pollList);
+  const { pollList, loading, votedStatus } = useSelector(
+    (state) => state.pollList
+  );
   const [showPollChart, setShowPollChart] = useState(false);
   const [showDeletedModal, setShowDeletedModal] = useState(false);
   const [selectedPoll, setSelectedPoll] = useState(null);
@@ -19,7 +21,7 @@ const PollsPage = () => {
 
   useEffect(() => {
     dispatch(getPollList(pageNumber));
-  }, [dispatch, pageNumber]);
+  }, [dispatch, pageNumber, votedStatus]);
 
   useEffect(() => {
     if (pageNumber === 1) {
@@ -46,22 +48,24 @@ const PollsPage = () => {
     setPolls(polls.filter((poll) => poll.id !== selectedPoll.id));
   };
 
-  return loading ? (
+  return pollList.length === 0 ? (
     <div className="text-center mx-auto w-full mt-10">
       <div className="inline-block h-10 w-10 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] text-secondary motion-reduce:animate-[spin_1.5s_linear_infinite]"></div>
     </div>
   ) : (
     <div>
-      {polls?.map((poll, index) => {
-        return (
-          <PollItem
-            key={index}
-            poll={poll}
-            showPollChartModal={showPollChartModal}
-            showDeleteModal={showDeleteModal}
-          />
-        );
-      })}
+      <div className="flex flex-wrap justify-center sm:justify-between 2xl:justify-normal gap-4 mx-auto w-[95%]">
+        {polls?.map((poll, index) => {
+          return (
+            <PollItem
+              key={index}
+              poll={poll}
+              showPollChartModal={showPollChartModal}
+              showDeleteModal={showDeleteModal}
+            />
+          );
+        })}
+      </div>
       <div className="text-center">
         <button
           onClick={() => setPageNumber((prevPageNumber) => prevPageNumber + 1)}

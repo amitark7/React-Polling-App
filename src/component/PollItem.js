@@ -43,8 +43,8 @@ const PollItem = ({ poll, showPollChartModal, showDeleteModal }) => {
   };
 
   return (
-    <div className="w-[80%] md:w-[60%] sm:w-[70%] lg:w-[50%] mx-auto mt-8 p-3 md:p-8 bg-gray-100 rounded shadow-lg">
-      <div className="flex justify-between flex-col  gap-2 sm:flex-row items-center mb-4">
+    <div className="w-[80%] sm:w-[48%] lg:w-[32%] 2xl:w-[24%] mt-8 p-3 md:p-8 min-h-[300px] bg-gray-100 rounded shadow-lg">
+      <div className="flex flex-col gap-2 items-center mb-4">
         <h2 className="text-xl font-semibold">{poll.title}</h2>
         {user?.roleId === ADMIN_ID && (
           <div className="flex gap-4">
@@ -79,7 +79,7 @@ const PollItem = ({ poll, showPollChartModal, showDeleteModal }) => {
             </label>
           </div>
         ))}
-        <div className="mx-auto w-[40%]">
+        <div className="mx-auto w-full">
           <button
             type="submit"
             className={`w-full ${

@@ -49,7 +49,7 @@ export const deleteSinglePoll = createAsyncThunk(
 
 const pollSlice = createSlice({
   name: "pollList",
-  initialState: { pollList: [], loading: false },
+  initialState: { pollList: [], loading: true, votedStatus: false },
   reducers: {},
   extraReducers: (builder) => {
     builder.addCase(getPollList.pending, (state) => {
@@ -63,13 +63,10 @@ const pollSlice = createSlice({
       state.loading = false;
     });
     builder.addCase(votedPollOption.pending, (state) => {
-      state.loading = true;
+      state.votedStatus = false;
     });
     builder.addCase(votedPollOption.fulfilled, (state) => {
-      state.loading = false;
-    });
-    builder.addCase(votedPollOption.rejected, (state) => {
-      state.loading = false;
+      state.votedStatus = true;
     });
   },
 });
