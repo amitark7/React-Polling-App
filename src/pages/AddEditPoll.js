@@ -68,7 +68,7 @@ const AddEditPoll = () => {
     setOptionsChanged(false);
   };
 
-  const handleSubmit = async (e) => {
+  const onFormSubmit = async (e) => {
     e.preventDefault();
     const newPoll = {
       title,
@@ -102,7 +102,7 @@ const AddEditPoll = () => {
       <h2 className="text-xl font-semibold mb-4">
         {id ? "Update" : "Create"} Poll
       </h2>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={onFormSubmit}>
         <div className="mb-4">
           <label htmlFor="question" className="block mb-1">
             Question
