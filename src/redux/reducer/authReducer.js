@@ -45,6 +45,14 @@ const authReducer = createSlice({
     setLoading: (state, action) => {
       state.loading = action.payload;
     },
+    getUser: (state) => {
+      state.user = JSON.parse(localStorage.getItem("user")) || null;
+    },
+    onLogout: (state) => {
+      localStorage.removeItem("user");
+      localStorage.removeItem("token");
+      state.user = null;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -72,6 +80,6 @@ const authReducer = createSlice({
   },
 });
 
-export const { setLoading } = authReducer.actions;
+export const { setLoading, getUser, onLogout } = authReducer.actions;
 axiosInterceptor();
 export default authReducer.reducer;
