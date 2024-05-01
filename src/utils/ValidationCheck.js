@@ -58,3 +58,31 @@ export const validateForm = (userData, isLogin = false) => {
   }
   return { isValid, errors };
 };
+
+export const validateAddEditForm = (data) => {
+  const newErrors = { question: "", options: [] };
+  let isVallid = true;
+
+  if (!data.title || data.title.length < 10) {
+    newErrors.question = "Question must be at least 10 characters long";
+    isVallid = false;
+  }
+
+  if (data.options.some((option) => !option.optionTitle.trim())) {
+    newErrors.options = data.options.map((option) => {
+      if (option.optionTitle.trim() === "") {
+        isVallid = false;
+        return "Option must not be empty";
+      } else {
+        return "";
+      }
+    });
+  }
+
+  if (data.options.length < 2) {
+    newErrors.options.push("There must be at least two options");
+    isVallid = false;
+  }
+
+  return { newErrors, isVallid };
+};

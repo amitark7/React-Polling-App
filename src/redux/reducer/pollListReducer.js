@@ -16,6 +16,50 @@ export const getPollList = createAsyncThunk(
   }
 );
 
+export const addPoll = createAsyncThunk("pollList/addPoll", async (data) => {
+  try {
+    const response = await axios.post(
+      `${process.env.REACT_APP_BASE_URL}poll/add`,
+      data
+    );
+    console.log(response);
+    return response;
+  } catch (error) {
+    return error.response;
+  }
+});
+
+export const updatePoll = createAsyncThunk(
+  "pollList/updatePoll",
+  async (data) => {
+    console.log(data);
+    try {
+      const response = await axios.put(
+        `${process.env.REACT_APP_BASE_URL}poll/${data.id}`,
+        data.newPoll
+      );
+      return response;
+    } catch (error) {
+      return error.response;
+    }
+  }
+);
+
+export const updatePollOption = createAsyncThunk(
+  "pollList/updatePollOption",
+  async (data) => {
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}poll/addPollOption/${data.id}`,
+        data.optionTitle
+      );
+      return response;
+    } catch (error) {
+      return error.response;
+    }
+  }
+);
+
 export const votedPollOption = createAsyncThunk(
   "pollList/votedPollOption",
   async (optionId) => {
@@ -25,6 +69,20 @@ export const votedPollOption = createAsyncThunk(
         {
           optionId,
         }
+      );
+      return response;
+    } catch (error) {
+      return error.response;
+    }
+  }
+);
+
+export const getSinglePoll = createAsyncThunk(
+  "pollList/singlePoll",
+  async (id) => {
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_BASE_URL}poll/${id}`
       );
       return response;
     } catch (error) {

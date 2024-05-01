@@ -4,7 +4,6 @@ import { IoBarChart } from "react-icons/io5";
 import { ADMIN_ID } from "../utils/constantData";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { votedPollOption } from "../redux/reducer/pollListReducer";
 import { getUser } from "../redux/reducer/authReducer";
 
 const PollItem = ({
@@ -29,6 +28,9 @@ const PollItem = ({
     if (userVotedOption) {
       setSelectedOption(userVotedOption);
       setVoted(true);
+    } else {
+      setSelectedOption(null);
+      setVoted(false);
     }
   }, [poll.id]);
 
@@ -55,7 +57,7 @@ const PollItem = ({
             onClick={() => showDeleteModal(poll)}
             className="text-red-500 cursor-pointer"
           />
-          <Link to={`/editpoll/${poll.id}`}>
+          <Link to={`/editpoll/${poll.id}`} state={poll}>
             <FaEdit className="text-blue-500 cursor-pointer" />
           </Link>
           <IoBarChart
