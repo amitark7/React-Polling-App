@@ -9,6 +9,7 @@ import {
 import { validateAddEditForm } from "../utils/validationCheck";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import ConfimationModal from "../component/ConfimationModal";
+import ErrorComponent from "../component/ErrorComponent";
 
 const AddEditPoll = () => {
   const { id } = useParams();
@@ -114,9 +115,7 @@ const AddEditPoll = () => {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
           />
-          {errors.question && (
-            <p className="text-red-500 text-sm">{errors.question}</p>
-          )}
+          <ErrorComponent errorMessage={errors.question} />
         </div>
         <div className="mb-4">
           <label className="block mb-1">Options</label>
@@ -137,16 +136,15 @@ const AddEditPoll = () => {
                   Remove
                 </button>
               </div>
-              {errors.options[index] && (
-                <p className="text-red-500 text-sm ml-2 mb-2">
-                  {errors.options[index]}
-                </p>
-              )}
+              <ErrorComponent errorMessage={errors.options[index]} />
             </div>
           ))}
+          {options.length === 0 && (
+            <ErrorComponent errorMessage={errors.options} />
+          )}
           <button
             type="button"
-            className="px-3 py-1 bg-green-500 text-white rounded"
+            className="px-3 py-1 mt-2 bg-green-500 text-white rounded"
             onClick={handleAddOption}
           >
             Add Option
@@ -164,7 +162,7 @@ const AddEditPoll = () => {
           modalTitle={"Successfully"}
           modalSubTitle={`Poll ${
             id ? "updated" : "created"
-          } Successfully. ok to redirect polling page`}
+          } successfully. ok to redirect polling page`}
           btnOkText={"Ok"}
           onBtnOkClick={() => {
             navigate("/polling");
