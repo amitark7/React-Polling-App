@@ -4,6 +4,7 @@ import {
   addPoll,
   getSinglePoll,
   updatePoll,
+  updatePollTitle,
 } from "../redux/reducer/pollListReducer";
 import { validateAddEditForm } from "../utils/validationCheck";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
@@ -28,12 +29,14 @@ const AddEditPoll = () => {
   const [options, setOptions] = useState([]);
   const [errors, setErrors] = useState({ title: "", optionTitle: "" });
   const [showModal, setShowModal] = useState(false);
+  const [showDeletedModal, setShowDeletedModal] = useState(false);
+  const [selectedIndex, setSelectedIndex] = useState(null);
   const [editOption, setEditOption] = useState(null);
   const { loading } = useSelector((state) => state.pollList);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const getSinglePollAndUpdate = async () => {
+  const getSinglePollDetails = async () => {
     if (state) {
       setNewPollData({ ...newPollData, title: state.title });
       setOptions(state.optionList);
@@ -48,7 +51,7 @@ const AddEditPoll = () => {
 
   useEffect(() => {
     if (id) {
-      getSinglePollAndUpdate();
+      getSinglePollDetails();
     }
   }, []);
 
@@ -97,14 +100,17 @@ const AddEditPoll = () => {
     }
   };
 
-  const handleDeleteOption = (index) => {
+  const handleDeleteOption = () => {
+    console.log(id);
     if (id) {
-      const deleteOptionId = options[index].id;
+      const deleteOptionId = options[selectedIndex].id;
       dispatch(deleteOption(deleteOptionId));
     }
     const newOptions = [...options];
-    newOptions.splice(index, 1);
+    newOptions.splice(selectedIndex, 1);
     setOptions(newOptions);
+    setShowDeletedModal(false);
+    setSelectedIndex(null);
   };
 
   const handleUpdateOption = (index) => {
@@ -132,7 +138,7 @@ const AddEditPoll = () => {
       let result = {};
       if (id) {
         if (state.title !== newPollData.title) {
-          result = await dispatch(updatePoll({ id, newPoll }));
+          result = await dispatch(updatePollTitle({ id, newPoll }));
         }
         setShowModal(true);
       } else {
@@ -197,7 +203,13 @@ const AddEditPoll = () => {
               >
                 <MdModeEditOutline />
               </button>
-              <button className="" onClick={() => handleDeleteOption(index)}>
+              <button
+                className=""
+                onClick={() => {
+                  setSelectedIndex(index);
+                  setShowDeletedModal(true);
+                }}
+              >
                 <MdDelete />
               </button>
             </div>
@@ -229,6 +241,17 @@ const AddEditPoll = () => {
             navigate("/polling");
             setShowModal(false);
           }}
+        />
+      )}
+      {showDeletedModal && (
+        <ConfimationModal
+          btnOkText={"Delete"}
+          btnCancelText={"Cancel"}
+          onBtnCancleClick={() => setShowDeletedModal(false)}
+          modalTitle={"Delete"}
+          modalSubTitle={"Are You Sure? you want delete this item "}
+          onBtnOkClick={handleDeleteOption}
+          btnColor={"bg-red-500"}
         />
       )}
     </div>

@@ -28,7 +28,7 @@ export const addPoll = createAsyncThunk("pollList/addPoll", async (data) => {
   }
 });
 
-export const updatePoll = createAsyncThunk(
+export const updatePollTitle = createAsyncThunk(
   "pollList/updatePoll",
   async (data) => {
     try {
@@ -117,13 +117,13 @@ const pollSlice = createSlice({
     builder.addCase(addPoll.rejected, (state) => {
       state.loading = false;
     });
-    builder.addCase(updatePoll.pending, (state) => {
+    builder.addCase(updatePollTitle.pending, (state) => {
       state.loading = true;
     });
-    builder.addCase(updatePoll.fulfilled, (state) => {
+    builder.addCase(updatePollTitle.fulfilled, (state) => {
       state.loading = false;
     });
-    builder.addCase(updatePoll.rejected, (state) => {
+    builder.addCase(updatePollTitle.rejected, (state) => {
       state.loading = false;
     });
   },
