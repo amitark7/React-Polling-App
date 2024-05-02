@@ -79,12 +79,16 @@ const AddEditPoll = () => {
       }
 
       if (id && !editOption?.id) {
-        await dispatch(
+        const result = await dispatch(
           addOption({
             id,
             optionTitle: newPollData.optionTitle,
           })
         );
+        if (result?.payload?.status === 200) {
+          const newOptions = [...options, result?.payload?.data.option];
+          setOptions(newOptions);
+        }
       }
       setEditOption(null);
       setNewPollData({ ...newPollData, optionTitle: "" });
@@ -180,10 +184,10 @@ const AddEditPoll = () => {
           </div>
           <ErrorComponent errorMessage={errors.optionTitle} />
         </div>
-        <div className="flex flex-col sm:flex-row gap-2 mb-2">
+        <div className="flex flex-wrap gap-2 mb-2">
           {options.map((item, index) => (
             <div
-              className="flex bg-white items-center border rounded-lg p-2"
+              className="flex bg-white items-center max-w-max border rounded-lg p-2"
               key={index}
             >
               {item.optionTitle}

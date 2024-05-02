@@ -22,7 +22,6 @@ export const addPoll = createAsyncThunk("pollList/addPoll", async (data) => {
       `${process.env.REACT_APP_BASE_URL}poll/add`,
       data
     );
-    console.log(response);
     return response;
   } catch (error) {
     return error.response;

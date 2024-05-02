@@ -22,7 +22,6 @@ export const deleteOption = createAsyncThunk(
       const response = await axios.delete(
         `${process.env.REACT_APP_BASE_URL}option/delete/${id}`
       );
-      console.log(response);
       return response;
     } catch (error) {
       return error.response;
