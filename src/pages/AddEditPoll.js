@@ -4,32 +4,42 @@ import {
   addPoll,
   getSinglePoll,
   updatePoll,
-  updatePollOption,
 } from "../redux/reducer/pollListReducer";
 import { validateAddEditForm } from "../utils/validationCheck";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import ConfimationModal from "../component/ConfimationModal";
 import ErrorComponent from "../component/ErrorComponent";
+import {
+  addOption,
+  deleteOption,
+  updateOption,
+} from "../redux/reducer/optionReducer";
+import { IoIosAddCircle } from "react-icons/io";
+import { MdDelete } from "react-icons/md";
+import { MdModeEditOutline } from "react-icons/md";
 
 const AddEditPoll = () => {
   const { id } = useParams();
   const { state } = useLocation();
-  const [title, setTitle] = useState("");
-  const [options, setOptions] = useState([{ optionTitle: "" }]);
-  const [errors, setErrors] = useState({ question: "", options: [] });
+  const [newPollData, setNewPollData] = useState({
+    title: "",
+    optionTitle: "",
+  });
+  const [options, setOptions] = useState([]);
+  const [errors, setErrors] = useState({ title: "", optionTitle: "" });
   const [showModal, setShowModal] = useState(false);
-  const [optionsChanged, setOptionsChanged] = useState(false);
+  const [editOption, setEditOption] = useState(null);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const getSinglePollAndUpdate = async () => {
     if (state) {
-      setTitle(state.title);
+      setNewPollData({ ...newPollData, title: state.title });
       setOptions(state.optionList);
     } else {
       const result = await dispatch(getSinglePoll(id));
       if (result?.payload?.status === 200) {
-        setTitle(result?.payload?.data?.title);
+        setNewPollData({ ...newPollData, title: result?.payload?.data?.title });
         setOptions(result?.payload?.data?.optionList);
       }
     }
@@ -41,63 +51,85 @@ const AddEditPoll = () => {
     }
   }, []);
 
-  const handleOptionChange = (index, value) => {
-    const newOptions = [...options];
-    newOptions[index].optionTitle = value;
-    setOptions(newOptions);
-    setErrors((prevErrors) => ({
-      ...prevErrors,
-      options: prevErrors.options.map((error, i) => (i === index ? "" : error)),
-    }));
+  const handleOptionChange = (e) => {
+    setNewPollData({ ...newPollData, [e.target.name]: e.target.value });
+    setErrors({ ...errors, [e.target.name]: "" });
   };
 
-  const handleAddOption = () => {
-    setOptions([...options, { optionTitle: "" }]);
-    setErrors((prevErrors) => ({
-      ...prevErrors,
-      options: [...prevErrors.options, ""],
-    }));
-    if (id) {
-      setOptionsChanged(true);
+  const handleAddOption = async () => {
+    const { newErrors, isVallid } = validateAddEditForm(newPollData);
+    if (isVallid) {
+      setOptions([...options, { optionTitle: newPollData.optionTitle }]);
+      if (id) {
+        if (editOption) {
+          const editedIndex = options.findIndex(
+            (option) => option.id === editOption.id
+          );
+          const newOptions = [...options];
+          newOptions[editedIndex].optionTitle = newPollData.optionTitle;
+          setOptions(newOptions);
+          dispatch(
+            updateOption({
+              id: editOption.id,
+              editedOption: newPollData.optionTitle,
+            })
+          );
+        } else {
+          await dispatch(
+            addOption({
+              id,
+              optionTitle: newPollData.optionTitle,
+            })
+          );
+        }
+      }
+      setNewPollData({ ...newPollData, optionTitle: "" });
+    } else {
+      setErrors(newErrors);
     }
   };
 
-  const handleRemoveOption = (index) => {
+  const handleDeleteOption = (index) => {
+    if (id) {
+      const deleteOptionId = options[index].id;
+      dispatch(deleteOption(deleteOptionId));
+    }
     const newOptions = [...options];
     newOptions.splice(index, 1);
     setOptions(newOptions);
-    setErrors((prevErrors) => ({
-      ...prevErrors,
-      options: prevErrors.options.filter((option, i) => i !== index),
-    }));
-    if (id) {
-      setOptionsChanged(false);
+  };
+
+  const handleUpdateOption = (index) => {
+    const option = options[index];
+    setNewPollData({ ...newPollData, optionTitle: options[index].optionTitle });
+    setEditOption(option);
+  };
+
+  const handleShowModal = (data) => {
+    if (data?.payload?.status === 200) {
+      setShowModal(true);
     }
   };
 
-  const onFormSubmit = async (e) => {
-    e.preventDefault();
+  const onFormSubmit = async () => {
     const newPoll = {
-      title,
+      title: newPollData.title,
       options,
     };
-    const { newErrors, isVallid } = validateAddEditForm(newPoll);
+    const { newErrors, isVallid } = validateAddEditForm({
+      options,
+      title: newPollData.title,
+    });
     if (isVallid) {
       let result = {};
-      if (optionsChanged) {
-        result = await dispatch(
-          updatePollOption({
-            id,
-            optionTitle: options[options.length - 1],
-          })
-        );
-      } else if (id) {
-        result = await dispatch(updatePoll({ id, newPoll }));
+      if (id) {
+        if (state.title !== newPollData.title) {
+          result = await dispatch(updatePoll({ id, newPoll }));
+        }
+        setShowModal(true);
       } else {
         result = await dispatch(addPoll(newPoll));
-      }
-      if (result?.payload?.status === 200) {
-        setShowModal(true);
+        handleShowModal(result);
       }
     } else {
       setErrors(newErrors);
@@ -105,11 +137,11 @@ const AddEditPoll = () => {
   };
 
   return (
-    <div className="w-[90%] max-w-md  mx-auto mt-8 p-8 bg-gray-100 rounded shadow-lg">
+    <div className="w-[90%]  mx-auto mt-8 p-8 bg-gray-100 rounded shadow-lg">
       <h2 className="text-xl font-semibold mb-4">
         {id ? "Update" : "Create"} Poll
       </h2>
-      <form onSubmit={onFormSubmit}>
+      <div>
         <div className="mb-4">
           <label htmlFor="question" className="block mb-1">
             Question
@@ -117,52 +149,60 @@ const AddEditPoll = () => {
           <input
             type="text"
             id="question"
+            name="title"
             className="w-full px-4 py-2 border rounded"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
+            value={newPollData.title}
+            onChange={handleOptionChange}
           />
-          <ErrorComponent errorMessage={errors.question} />
+          <ErrorComponent errorMessage={errors.title} />
         </div>
-        <div className="mb-4">
-          <label className="block mb-1">Options</label>
-          {options.map((option, index) => (
-            <div key={index} className="mb-2">
-              <div className="flex items-center">
-                <input
-                  type="text"
-                  className="w-full px-4 py-2 border rounded mr-2"
-                  value={option.optionTitle}
-                  onChange={(e) => handleOptionChange(index, e.target.value)}
-                />
-                <button
-                  type="button"
-                  className="px-3 py-1 bg-red-500 text-white rounded"
-                  onClick={() => handleRemoveOption(index)}
-                >
-                  Remove
-                </button>
-              </div>
-              <ErrorComponent errorMessage={errors.options[index]} />
+        <div className="form-add-option">
+          <p className="add-option">Option</p>
+          <div className="flex mb-3">
+            <input
+              id="option"
+              name="optionTitle"
+              className="border rounded-l-md p-2 w-full"
+              value={newPollData.optionTitle}
+              onChange={handleOptionChange}
+              placeholder="Enter Option"
+            />
+            <button
+              className="border-l border-gray-300 bg-blue-500 text-white p-2 rounded-r-md"
+              onClick={() => handleAddOption()}
+            >
+              <IoIosAddCircle />
+            </button>
+          </div>
+          <ErrorComponent errorMessage={errors.optionTitle} />
+        </div>
+        <div className="flex gap-2 mb-2">
+          {options.map((item, index) => (
+            <div
+              className="flex bg-white items-center border rounded-lg p-2"
+              key={index}
+            >
+              {item.optionTitle}
+              <button
+                className="ml-1"
+                onClick={() => handleUpdateOption(index)}
+              >
+                <MdModeEditOutline />
+              </button>
+              <button className="" onClick={() => handleDeleteOption(index)}>
+                <MdDelete />
+              </button>
             </div>
           ))}
-          {options.length === 0 && (
-            <ErrorComponent errorMessage={errors.options} />
-          )}
-          <button
-            type="button"
-            className="px-3 py-1 mt-2 bg-green-500 text-white rounded"
-            onClick={handleAddOption}
-          >
-            Add Option
-          </button>
         </div>
         <button
-          type="submit"
+          type="button"
           className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-200"
+          onClick={() => onFormSubmit()}
         >
           Submit
         </button>
-      </form>
+      </div>
       {showModal && (
         <ConfimationModal
           modalTitle={"Successfully"}

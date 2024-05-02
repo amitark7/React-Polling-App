@@ -32,26 +32,10 @@ export const addPoll = createAsyncThunk("pollList/addPoll", async (data) => {
 export const updatePoll = createAsyncThunk(
   "pollList/updatePoll",
   async (data) => {
-    console.log(data);
     try {
       const response = await axios.put(
         `${process.env.REACT_APP_BASE_URL}poll/${data.id}`,
         data.newPoll
-      );
-      return response;
-    } catch (error) {
-      return error.response;
-    }
-  }
-);
-
-export const updatePollOption = createAsyncThunk(
-  "pollList/updatePollOption",
-  async (data) => {
-    try {
-      const response = await axios.post(
-        `${process.env.REACT_APP_BASE_URL}poll/addPollOption/${data.id}`,
-        data.optionTitle
       );
       return response;
     } catch (error) {
