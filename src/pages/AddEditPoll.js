@@ -36,7 +36,9 @@ const AddEditPoll = () => {
   };
 
   useEffect(() => {
-    getSinglePollAndUpdate();
+    if (id) {
+      getSinglePollAndUpdate();
+    }
   }, []);
 
   const handleOptionChange = (index, value) => {
@@ -55,7 +57,9 @@ const AddEditPoll = () => {
       ...prevErrors,
       options: [...prevErrors.options, ""],
     }));
-    setOptionsChanged(true);
+    if (id) {
+      setOptionsChanged(true);
+    }
   };
 
   const handleRemoveOption = (index) => {
@@ -66,7 +70,9 @@ const AddEditPoll = () => {
       ...prevErrors,
       options: prevErrors.options.filter((option, i) => i !== index),
     }));
-    setOptionsChanged(false);
+    if (id) {
+      setOptionsChanged(false);
+    }
   };
 
   const onFormSubmit = async (e) => {
