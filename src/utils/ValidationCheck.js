@@ -58,3 +58,25 @@ export const validateForm = (userData, isLogin = false) => {
   }
   return { isValid, errors };
 };
+
+export const validateAddEditForm = (data) => {
+  const newErrors = { title: "", optionTitle: "" };
+  let isVallid = true;
+
+  if (data.title?.trim() === "" || data.title?.length < 10) {
+    newErrors.title = "Question must be at least 10 characters long";
+    isVallid = false;
+  }
+
+  if (data.optionTitle?.trim() === "") {
+    newErrors.optionTitle = "Option must not be empty";
+    isVallid = false;
+  }
+
+  if (data.options?.length < 2) {
+    newErrors.optionTitle = "There must be at least two options";
+    isVallid = false;
+  }
+
+  return { newErrors, isVallid };
+};
