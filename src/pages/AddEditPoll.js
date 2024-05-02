@@ -137,7 +137,7 @@ const AddEditPoll = () => {
   };
 
   return (
-    <div className="w-[90%]  mx-auto mt-8 p-8 bg-gray-100 rounded shadow-lg">
+    <div className="w-[90%] md:w-[60%] lg:w-[50%] xl:w-[40%] mx-auto mt-8 p-8 bg-gray-100 rounded shadow-lg">
       <h2 className="text-xl font-semibold mb-4">
         {id ? "Update" : "Create"} Poll
       </h2>
@@ -176,7 +176,7 @@ const AddEditPoll = () => {
           </div>
           <ErrorComponent errorMessage={errors.optionTitle} />
         </div>
-        <div className="flex gap-2 mb-2">
+        <div className="flex flex-col sm:flex-row gap-2 mb-2">
           {options.map((item, index) => (
             <div
               className="flex bg-white items-center border rounded-lg p-2"
