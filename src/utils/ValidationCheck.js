@@ -63,7 +63,7 @@ export const validateAddEditForm = (data) => {
   const newErrors = { title: "", optionTitle: "" };
   let isVallid = true;
 
-  if (!data.title.trim() || data.title.length < 10) {
+  if (data.title?.trim() === "" || data.title?.length < 10) {
     newErrors.title = "Question must be at least 10 characters long";
     isVallid = false;
   }

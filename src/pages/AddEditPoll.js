@@ -57,32 +57,35 @@ const AddEditPoll = () => {
   };
 
   const handleAddOption = async () => {
-    const { newErrors, isVallid } = validateAddEditForm(newPollData);
+    const { newErrors, isVallid } = validateAddEditForm({
+      optionTitle: newPollData.optionTitle,
+    });
     if (isVallid) {
       setOptions([...options, { optionTitle: newPollData.optionTitle }]);
-      if (id) {
-        if (editOption) {
-          const editedIndex = options.findIndex(
-            (option) => option.id === editOption.id
-          );
-          const newOptions = [...options];
-          newOptions[editedIndex].optionTitle = newPollData.optionTitle;
-          setOptions(newOptions);
-          dispatch(
-            updateOption({
-              id: editOption.id,
-              editedOption: newPollData.optionTitle,
-            })
-          );
-        } else {
-          await dispatch(
-            addOption({
-              id,
-              optionTitle: newPollData.optionTitle,
-            })
-          );
-        }
+      if (editOption) {
+        const newOptions = [...options];
+        newOptions[editOption.index].optionTitle = newPollData.optionTitle;
+        setOptions(newOptions);
       }
+
+      if (id && editOption?.id) {
+        dispatch(
+          updateOption({
+            id: editOption.id,
+            editedOption: newPollData.optionTitle,
+          })
+        );
+      }
+
+      if (id && !editOption?.id) {
+        await dispatch(
+          addOption({
+            id,
+            optionTitle: newPollData.optionTitle,
+          })
+        );
+      }
+      setEditOption(null);
       setNewPollData({ ...newPollData, optionTitle: "" });
     } else {
       setErrors(newErrors);
@@ -101,8 +104,8 @@ const AddEditPoll = () => {
 
   const handleUpdateOption = (index) => {
     const option = options[index];
-    setNewPollData({ ...newPollData, optionTitle: options[index].optionTitle });
-    setEditOption(option);
+    setNewPollData({ ...newPollData, optionTitle: option?.optionTitle });
+    setEditOption({ index, id: option?.id });
   };
 
   const handleShowModal = (data) => {
@@ -158,7 +161,7 @@ const AddEditPoll = () => {
         </div>
         <div className="form-add-option">
           <p className="add-option">Option</p>
-          <div className="flex mb-3">
+          <div className="flex my-2">
             <input
               id="option"
               name="optionTitle"
@@ -195,13 +198,15 @@ const AddEditPoll = () => {
             </div>
           ))}
         </div>
-        <button
-          type="button"
-          className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-200"
-          onClick={() => onFormSubmit()}
-        >
-          Submit
-        </button>
+        <div className="w-full text-center mt-6">
+          <button
+            type="button"
+            className="w-[50%] bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-200"
+            onClick={() => onFormSubmit()}
+          >
+            Submit
+          </button>
+        </div>
       </div>
       {showModal && (
         <ConfimationModal
