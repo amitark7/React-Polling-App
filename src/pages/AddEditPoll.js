@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   addPoll,
   getSinglePoll,
@@ -29,6 +29,7 @@ const AddEditPoll = () => {
   const [errors, setErrors] = useState({ title: "", optionTitle: "" });
   const [showModal, setShowModal] = useState(false);
   const [editOption, setEditOption] = useState(null);
+  const { loading } = useSelector((state) => state.pollList);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -203,8 +204,13 @@ const AddEditPoll = () => {
             type="button"
             className="w-[50%] bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-200"
             onClick={() => onFormSubmit()}
+            disabled={loading}
           >
-            Submit
+            {loading ? (
+              <div className="inline-block h-5 w-5 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] text-secondary motion-reduce:animate-[spin_1.5s_linear_infinite]"></div>
+            ) : (
+              "Submit"
+            )}
           </button>
         </div>
       </div>

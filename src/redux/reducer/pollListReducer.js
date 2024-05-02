@@ -93,7 +93,7 @@ const pollSlice = createSlice({
   name: "pollList",
   initialState: {
     pollList: [],
-    loading: true,
+    loading: false,
     pollListLength: 0,
   },
   reducers: {},
@@ -107,6 +107,24 @@ const pollSlice = createSlice({
       state.pollListLength = action.payload?.length;
     });
     builder.addCase(getPollList.rejected, (state) => {
+      state.loading = false;
+    });
+    builder.addCase(addPoll.pending, (state) => {
+      state.loading = true;
+    });
+    builder.addCase(addPoll.fulfilled, (state) => {
+      state.loading = false;
+    });
+    builder.addCase(addPoll.rejected, (state) => {
+      state.loading = false;
+    });
+    builder.addCase(updatePoll.pending, (state) => {
+      state.loading = true;
+    });
+    builder.addCase(updatePoll.fulfilled, (state) => {
+      state.loading = false;
+    });
+    builder.addCase(updatePoll.rejected, (state) => {
       state.loading = false;
     });
   },
