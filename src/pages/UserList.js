@@ -27,15 +27,15 @@ const UserList = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto mt-8 p-8 bg-gray-100 rounded shadow-lg">
-      <h2 className="text-xl font-semibold mb-4">User List</h2>
-      <div className="mb-4 flex items-center">
-        <label htmlFor="perPage">Entries per page:</label>
+    <div className="w-[90%] max-w-4xl mx-auto mt-8 p-0 py-4 px-2 sm:p-8 bg-gray-100 rounded shadow-lg">
+      <h2 className="text-lg sm:text-xl font-semibold mb-4">User List</h2>
+      <div className="mb-4 text-sm sm:text-base flex items-center">
+        <label htmlFor="perPage ">Entries per page:</label>
         <select
           id="perPage"
           value={usersPerPage}
           onChange={handleChangePerPage}
-          className="ml-2 border rounded px-2 py-1"
+          className="ml-2 border rounded px-1 py-1"
         >
           <option value={5}>5</option>
           <option value={10}>10</option>
@@ -45,19 +45,29 @@ const UserList = () => {
       <table className="w-full text-left">
         <thead>
           <tr>
-            <th className="border-b-2 px-4 py-2">Name</th>
-            <th className="border-b-2 px-4 py-2">Email</th>
-            <th className="border-b-2 px-4 py-2">Role ID</th>
+            <th className="border-b-2 text-sm sm:text-base px-4 sm:px-4 py-2">
+              Name
+            </th>
+            <th className="border-b-2 text-sm sm:text-base px-1 sm:px-4 py-2">
+              Email
+            </th>
+            <th className="border-b-2 text-sm sm:text-base px-1 sm:px-4 py-2">
+              Role
+            </th>
           </tr>
         </thead>
         <tbody>
           {users?.map((user, index) => (
             <tr key={index}>
-              <td className="border-b px-4 py-2">
+              <td className="border-b text-xs sm:text-sm md:text-base px-1 sm:px-4 py-2">
                 {user.firstName} {user.lastName}
               </td>
-              <td className="border-b px-4 py-2">{user.email}</td>
-              <td className="border-b px-4 py-2">{user.roleId}</td>
+              <td className="border-b text-xs sm:text-sm md:text-base px-1 sm:px-4 py-2">
+                {user.email}
+              </td>
+              <td className="border-b text-xs sm:text-sm md:text-base px-1 sm:px-4 py-2">
+                {user.roleId === 1 ? "USER" : "ADMIN"}
+              </td>
             </tr>
           ))}
         </tbody>
@@ -68,19 +78,19 @@ const UserList = () => {
           disabled={currentPage === 1}
           className={` ${
             currentPage === 1 ? "bg-gray-400" : "bg-blue-500"
-          } text-white py-2 px-4 rounded ${
+          } text-white w-[90px] text-xs sm:text-base py-2 px-4 rounded ${
             currentPage === 1 ? "bg-gray-400" : "hover:bg-blue-600"
           } transition duration-200`}
         >
           Previous
         </button>
-        <div>Page {currentPage}</div>
+        <div className="text-xs sm:text-base">Page {currentPage}</div>
         <button
           onClick={() => setCurrentPage(currentPage + 1)}
           disabled={users.length < usersPerPage}
           className={` text-white ${
             users.length < usersPerPage ? "bg-gray-400" : "bg-blue-500"
-          } py-2 px-4  rounded ${
+          } py-2 px-4 text-xs w-[90px] sm:text-base  rounded ${
             users.length < usersPerPage ? "bg-gray-400" : "hover:bg-blue-600"
           } transition duration-200`}
         >

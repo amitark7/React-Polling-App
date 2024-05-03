@@ -18,7 +18,7 @@ export const getUserList = createAsyncThunk(
 
 const userListSlice = createSlice({
   name: "userList",
-  initialState: { userList: [], loading: false },
+  initialState: { loading: false },
   reducers: {},
   extraReducers: (builder) => {
     builder.addCase(getUserList.pending, (state) => {
