@@ -32,8 +32,7 @@ const Signup = () => {
     setErrors({ ...errors, [e.target.name]: "" });
   };
 
-  const handleNavigate = () => {
-    navigate("/");
+  const handleCloseModal = () => {
     setShowModal(false);
   };
 
@@ -73,7 +72,17 @@ const Signup = () => {
               : "User signup Succesfully! Click Ok to Login Page."
           }`}
           btnOkText={"Ok"}
-          onBtnOkClick={handleNavigate}
+          onBtnOkClick={
+            user
+              ? () => {
+                  navigate("/polling");
+                  handleCloseModal();
+                }
+              : () => {
+                  navigate("/");
+                  handleCloseModal();
+                }
+          }
         />
       )}
       <div className="border bg-white w-[90%] sm:w-[50%] md:w-[40%] xl:w-[30%] 2xl:w-[25%] py-4 md:py-4 px-5 text-center rounded-lg mx-auto mt-6 xl:mt-10 shadow-lg">
@@ -181,11 +190,19 @@ const Signup = () => {
             loading ? "bg-blue-400" : "bg-blue-500"
           } py-2 text-xl rounded-md mb-4 font-semibold`}
         >
-          {loading ? "Loading..." : user ? "Create User" : "Signup"}
+          {loading ? (
+            <div className="inline-block h-5 w-5 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] text-secondary motion-reduce:animate-[spin_1.5s_linear_infinite]"></div>
+          ) : user ? (
+            "Create User"
+          ) : (
+            "Signup"
+          )}
         </button>
-        <p className="text-base">
-          Already have an account? <Link to="/">Login</Link>
-        </p>
+        {!user && (
+          <p className="text-base">
+            Already have an account? <Link to="/">Login</Link>
+          </p>
+        )}
       </div>
     </div>
   );
