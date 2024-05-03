@@ -1,29 +1,28 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
+import { getUserList } from "../redux/reducer/userListReducer";
 
 const UserList = () => {
-  const [users, setUsers] = useState([]);
+  const [users, setUsers] = useState([""]);
   const [currentPage, setCurrentPage] = useState(1);
   const [usersPerPage, setUsersPerPage] = useState(5);
-  const dispatch=useDispatch();
+  const dispatch = useDispatch();
 
-  const getUserList=async ()=>{
-    const result=await dispatch(getUserList({page:currentPage,limit:usersPerPage}))
-    if(result?.payload?.status===200){
-      setUsers(result?.payload?.data)
+  const getUsers = async () => {
+    const result = await dispatch(
+      getUserList({ page: currentPage, limit: usersPerPage })
+    );
+    if (result?.payload?.status === 200) {
+      setUsers(result?.payload?.data.rows);
     }
-  }
+  };
 
   useEffect(() => {
-    getUserList()
-  }, [currentPage,usersPerPage]);
-
-  const indexOfLastUser = currentPage * usersPerPage;
-  const indexOfFirstUser = indexOfLastUser - usersPerPage;
-  const currentUsers = users.slice(indexOfFirstUser, indexOfLastUser);
+    getUsers();
+  }, [currentPage, usersPerPage]);
 
   const handleChangePerPage = (e) => {
-    setCurrentPage(1); 
+    setCurrentPage(1);
     setUsersPerPage(parseInt(e.target.value, 10));
   };
 
@@ -48,34 +47,42 @@ const UserList = () => {
           <tr>
             <th className="border-b-2 px-4 py-2">Name</th>
             <th className="border-b-2 px-4 py-2">Email</th>
-            <th className="border-b-2 px-4 py-2">Role</th>
+            <th className="border-b-2 px-4 py-2">Role ID</th>
           </tr>
         </thead>
         <tbody>
-          {currentUsers.map((user) => (
-            <tr key={user.id}>
-              <td className="border-b px-4 py-2">{user.name}</td>
+          {users?.map((user, index) => (
+            <tr key={index}>
+              <td className="border-b px-4 py-2">
+                {user.firstName} {user.lastName}
+              </td>
               <td className="border-b px-4 py-2">{user.email}</td>
-              <td className="border-b px-4 py-2">{user.role}</td>
+              <td className="border-b px-4 py-2">{user.roleId}</td>
             </tr>
           ))}
         </tbody>
       </table>
-      <div className="flex justify-between mt-4">
+      <div className="flex items-center justify-between mt-4">
         <button
           onClick={() => setCurrentPage(currentPage - 1)}
           disabled={currentPage === 1}
-          className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-200"
+          className={` ${
+            currentPage === 1 ? "bg-gray-400" : "bg-blue-500"
+          } text-white py-2 px-4 rounded ${
+            currentPage === 1 ? "bg-gray-400" : "hover:bg-blue-600"
+          } transition duration-200`}
         >
           Previous
         </button>
-        <div>
-          Page {currentPage} of {Math.ceil(users.length / usersPerPage)}
-        </div>
+        <div>Page {currentPage}</div>
         <button
           onClick={() => setCurrentPage(currentPage + 1)}
-          disabled={currentPage === Math.ceil(users.length / usersPerPage)}
-          className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-200"
+          disabled={users.length < usersPerPage}
+          className={` text-white ${
+            users.length < usersPerPage ? "bg-gray-400" : "bg-blue-500"
+          } py-2 px-4  rounded ${
+            users.length < usersPerPage ? "bg-gray-400" : "hover:bg-blue-600"
+          } transition duration-200`}
         >
           Next
         </button>
