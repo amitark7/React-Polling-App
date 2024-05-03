@@ -32,6 +32,21 @@ export const loginUser = createAsyncThunk(
     }
   }
 );
+export const createUser = createAsyncThunk(
+  "auth/createUser",
+  async (userData) => {
+    console.log(userData);
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}user/create`,
+        userData
+      );
+      return response.data;
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  }
+);
 
 const authReducer = createSlice({
   name: "auth",
@@ -75,6 +90,15 @@ const authReducer = createSlice({
         state.loading = false;
       })
       .addCase(signupUser.rejected, (state) => {
+        state.loading = false;
+      })
+      .addCase(createUser.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(createUser.fulfilled, (state) => {
+        state.loading = false;
+      })
+      .addCase(createUser.rejected, (state) => {
         state.loading = false;
       });
   },

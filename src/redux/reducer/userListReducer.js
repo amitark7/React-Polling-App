@@ -21,6 +21,9 @@ const userListSlice = createSlice({
   initialState: { userList: [], loading: false },
   reducers: {},
   extraReducers: (builder) => {
+    builder.addCase(getUserList.pending, (state) => {
+      state.loading = true;
+    });
     builder.addCase(getUserList.fulfilled, (state, action) => {
       state.loading = false;
       state.userList = action.payload;

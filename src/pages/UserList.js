@@ -7,7 +7,7 @@ const UserList = () => {
   const [pageNumber, setPageNumber] = useState(1);
   const [pageLimit, setPageLimit] = useState(5);
   const dispatch = useDispatch();
-  const { userList } = useSelector((state) => state.userList);
+  const { userList, loading } = useSelector((state) => state.userList);
 
   useEffect(() => {
     dispatch(getUserList({ page: pageNumber, limit: pageLimit }));
@@ -53,7 +53,14 @@ const UserList = () => {
           </tr>
         </thead>
         <tbody>
-          {userList &&
+          {loading ? (
+            <tr>
+              <td colSpan="3" className="text-center py-4">
+                <div className="inline-block h-10 w-10 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] text-secondary motion-reduce:animate-[spin_1.5s_linear_infinite]"></div>
+              </td>
+            </tr>
+          ) : (
+            userList &&
             userList?.map((user, index) => (
               <tr key={index}>
                 <td className="border-b text-xs sm:text-sm md:text-base px-1 sm:px-4 py-2">
@@ -66,17 +73,18 @@ const UserList = () => {
                   {user.roleId === 1 ? "USER" : "ADMIN"}
                 </td>
               </tr>
-            ))}
+            ))
+          )}
         </tbody>
       </table>
       <div className="flex items-center justify-between mt-4">
         <button
           onClick={() => setPageNumber(pageNumber - 1)}
-          disabled={pageNumber === 1}
+          disabled={pageNumber === 1 || loading}
           className={` ${
-            pageNumber === 1 ? "bg-gray-400" : "bg-blue-500"
+            pageNumber === 1 || loading ? "bg-gray-400" : "bg-blue-500"
           } text-white w-[90px] text-xs sm:text-base py-2 px-4 rounded ${
-            pageNumber === 1 ? "bg-gray-400" : "hover:bg-blue-600"
+            pageNumber === 1 || loading ? "bg-gray-400" : "hover:bg-blue-600"
           } transition duration-200`}
         >
           Previous
@@ -84,11 +92,15 @@ const UserList = () => {
         <div className="text-xs sm:text-base">Page {pageNumber}</div>
         <button
           onClick={() => setPageNumber(pageNumber + 1)}
-          disabled={userList.length < pageLimit}
+          disabled={userList?.length < pageLimit || loading}
           className={` text-white ${
-            userList.length < pageLimit ? "bg-gray-400" : "bg-blue-500"
+            userList?.length < pageLimit || loading
+              ? "bg-gray-400"
+              : "bg-blue-500"
           } py-2 px-4 text-xs w-[90px] sm:text-base  rounded ${
-            userList.length < pageLimit ? "bg-gray-400" : "hover:bg-blue-600"
+            userList?.length < pageLimit || loading
+              ? "bg-gray-400"
+              : "hover:bg-blue-600"
           } transition duration-200`}
         >
           Next
