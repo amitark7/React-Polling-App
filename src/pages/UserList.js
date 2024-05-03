@@ -1,25 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { getUserList } from "../redux/reducer/userListReducer";
 import { entriesPerPageValue } from "../utils/constantData";
 
 const UserList = () => {
-  const [users, setUsers] = useState([""]);
   const [pageNumber, setPageNumber] = useState(1);
   const [pageLimit, setPageLimit] = useState(5);
   const dispatch = useDispatch();
-
-  const getUsers = async () => {
-    const result = await dispatch(
-      getUserList({ page: pageNumber, limit: pageLimit })
-    );
-    if (result?.payload?.status === 200) {
-      setUsers(result?.payload?.data.rows);
-    }
-  };
+  const { userList } = useSelector((state) => state.userList);
 
   useEffect(() => {
-    getUsers();
+    dispatch(getUserList({ page: pageNumber, limit: pageLimit }));
   }, [pageNumber, pageLimit]);
 
   const handleChangePerPage = (e) => {
@@ -62,8 +53,8 @@ const UserList = () => {
           </tr>
         </thead>
         <tbody>
-          {users &&
-            users?.map((user, index) => (
+          {userList &&
+            userList?.map((user, index) => (
               <tr key={index}>
                 <td className="border-b text-xs sm:text-sm md:text-base px-1 sm:px-4 py-2">
                   {user.firstName} {user.lastName}
@@ -93,11 +84,11 @@ const UserList = () => {
         <div className="text-xs sm:text-base">Page {pageNumber}</div>
         <button
           onClick={() => setPageNumber(pageNumber + 1)}
-          disabled={users.length < pageLimit}
+          disabled={userList.length < pageLimit}
           className={` text-white ${
-            users.length < pageLimit ? "bg-gray-400" : "bg-blue-500"
+            userList.length < pageLimit ? "bg-gray-400" : "bg-blue-500"
           } py-2 px-4 text-xs w-[90px] sm:text-base  rounded ${
-            users.length < pageLimit ? "bg-gray-400" : "hover:bg-blue-600"
+            userList.length < pageLimit ? "bg-gray-400" : "hover:bg-blue-600"
           } transition duration-200`}
         >
           Next

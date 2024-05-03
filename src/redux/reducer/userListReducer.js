@@ -9,7 +9,7 @@ export const getUserList = createAsyncThunk(
       const response = await axios.get(
         `${process.env.REACT_APP_BASE_URL}user/list/${data.page}?limit=${data.limit}`
       );
-      return response;
+      return response.data.rows;
     } catch (error) {
       return error.response;
     }
@@ -18,14 +18,12 @@ export const getUserList = createAsyncThunk(
 
 const userListSlice = createSlice({
   name: "userList",
-  initialState: { loading: false },
+  initialState: { userList: [], loading: false },
   reducers: {},
   extraReducers: (builder) => {
-    builder.addCase(getUserList.pending, (state) => {
-      state.loading = true;
-    });
-    builder.addCase(getUserList.fulfilled, (state) => {
+    builder.addCase(getUserList.fulfilled, (state, action) => {
       state.loading = false;
+      state.userList = action.payload;
     });
     builder.addCase(getUserList.rejected, (state) => {
       state.loading = false;
