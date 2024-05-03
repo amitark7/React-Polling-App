@@ -32,8 +32,13 @@ const Signup = () => {
     setErrors({ ...errors, [e.target.name]: "" });
   };
 
-  const handleCloseModal = () => {
+  const handleNavigate = () => {
     setShowModal(false);
+    if (user) {
+      navigate("/polling");
+    } else {
+      navigate("/");
+    }
   };
 
   const onFormSubmit = async (e) => {
@@ -72,17 +77,7 @@ const Signup = () => {
               : "User signup Succesfully! Click Ok to Login Page."
           }`}
           btnOkText={"Ok"}
-          onBtnOkClick={
-            user
-              ? () => {
-                  navigate("/polling");
-                  handleCloseModal();
-                }
-              : () => {
-                  navigate("/");
-                  handleCloseModal();
-                }
-          }
+          onBtnOkClick={() => handleNavigate()}
         />
       )}
       <div className="border bg-white w-[90%] sm:w-[50%] md:w-[40%] xl:w-[30%] 2xl:w-[25%] py-4 md:py-4 px-5 text-center rounded-lg mx-auto mt-6 xl:mt-10 shadow-lg">
