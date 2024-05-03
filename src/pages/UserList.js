@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { getUserList } from "../redux/reducer/userListReducer";
+import { entriesPerPageValue } from "../utils/constantData";
 
 const UserList = () => {
   const [users, setUsers] = useState([""]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [usersPerPage, setUsersPerPage] = useState(5);
+  const [pageNumber, setPageNumber] = useState(1);
+  const [pageLimit, setPageLimit] = useState(5);
   const dispatch = useDispatch();
 
   const getUsers = async () => {
     const result = await dispatch(
-      getUserList({ page: currentPage, limit: usersPerPage })
+      getUserList({ page: pageNumber, limit: pageLimit })
     );
     if (result?.payload?.status === 200) {
       setUsers(result?.payload?.data.rows);
@@ -19,11 +20,11 @@ const UserList = () => {
 
   useEffect(() => {
     getUsers();
-  }, [currentPage, usersPerPage]);
+  }, [pageNumber, pageLimit]);
 
   const handleChangePerPage = (e) => {
-    setCurrentPage(1);
-    setUsersPerPage(parseInt(e.target.value, 10));
+    setPageNumber(1);
+    setPageLimit(parseInt(e.target.value, 10));
   };
 
   return (
@@ -33,13 +34,17 @@ const UserList = () => {
         <label htmlFor="perPage ">Entries per page:</label>
         <select
           id="perPage"
-          value={usersPerPage}
+          value={pageLimit}
           onChange={handleChangePerPage}
           className="ml-2 border rounded px-1 py-1"
         >
-          <option value={5}>5</option>
-          <option value={10}>10</option>
-          <option value={20}>20</option>
+          {entriesPerPageValue.map((value, index) => {
+            return (
+              <option key={index} value={value}>
+                {value}
+              </option>
+            );
+          })}
         </select>
       </div>
       <table className="w-full text-left">
@@ -57,41 +62,42 @@ const UserList = () => {
           </tr>
         </thead>
         <tbody>
-          {users?.map((user, index) => (
-            <tr key={index}>
-              <td className="border-b text-xs sm:text-sm md:text-base px-1 sm:px-4 py-2">
-                {user.firstName} {user.lastName}
-              </td>
-              <td className="border-b text-xs sm:text-sm md:text-base px-1 sm:px-4 py-2">
-                {user.email}
-              </td>
-              <td className="border-b text-xs sm:text-sm md:text-base px-1 sm:px-4 py-2">
-                {user.roleId === 1 ? "USER" : "ADMIN"}
-              </td>
-            </tr>
-          ))}
+          {users &&
+            users?.map((user, index) => (
+              <tr key={index}>
+                <td className="border-b text-xs sm:text-sm md:text-base px-1 sm:px-4 py-2">
+                  {user.firstName} {user.lastName}
+                </td>
+                <td className="border-b text-xs sm:text-sm md:text-base px-1 sm:px-4 py-2">
+                  {user.email}
+                </td>
+                <td className="border-b text-xs sm:text-sm md:text-base px-1 sm:px-4 py-2">
+                  {user.roleId === 1 ? "USER" : "ADMIN"}
+                </td>
+              </tr>
+            ))}
         </tbody>
       </table>
       <div className="flex items-center justify-between mt-4">
         <button
-          onClick={() => setCurrentPage(currentPage - 1)}
-          disabled={currentPage === 1}
+          onClick={() => setPageNumber(pageNumber - 1)}
+          disabled={pageNumber === 1}
           className={` ${
-            currentPage === 1 ? "bg-gray-400" : "bg-blue-500"
+            pageNumber === 1 ? "bg-gray-400" : "bg-blue-500"
           } text-white w-[90px] text-xs sm:text-base py-2 px-4 rounded ${
-            currentPage === 1 ? "bg-gray-400" : "hover:bg-blue-600"
+            pageNumber === 1 ? "bg-gray-400" : "hover:bg-blue-600"
           } transition duration-200`}
         >
           Previous
         </button>
-        <div className="text-xs sm:text-base">Page {currentPage}</div>
+        <div className="text-xs sm:text-base">Page {pageNumber}</div>
         <button
-          onClick={() => setCurrentPage(currentPage + 1)}
-          disabled={users.length < usersPerPage}
+          onClick={() => setPageNumber(pageNumber + 1)}
+          disabled={users.length < pageLimit}
           className={` text-white ${
-            users.length < usersPerPage ? "bg-gray-400" : "bg-blue-500"
+            users.length < pageLimit ? "bg-gray-400" : "bg-blue-500"
           } py-2 px-4 text-xs w-[90px] sm:text-base  rounded ${
-            users.length < usersPerPage ? "bg-gray-400" : "hover:bg-blue-600"
+            users.length < pageLimit ? "bg-gray-400" : "hover:bg-blue-600"
           } transition duration-200`}
         >
           Next
