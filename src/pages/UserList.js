@@ -53,7 +53,14 @@ const UserList = () => {
           </tr>
         </thead>
         <tbody>
-          {userList &&
+          {loading ? (
+            <tr>
+              <td colSpan="3" className="text-center py-4">
+                <div className="inline-block h-10 w-10 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] text-secondary motion-reduce:animate-[spin_1.5s_linear_infinite]"></div>
+              </td>
+            </tr>
+          ) : (
+            userList &&
             userList?.map((user, index) => (
               <tr key={index}>
                 <td className="border-b text-xs sm:text-sm md:text-base px-1 sm:px-4 py-2">
@@ -66,7 +73,8 @@ const UserList = () => {
                   {user.roleId === 1 ? "USER" : "ADMIN"}
                 </td>
               </tr>
-            ))}
+            ))
+          )}
         </tbody>
       </table>
       <div className="flex items-center justify-between mt-4">
@@ -81,11 +89,7 @@ const UserList = () => {
         >
           Previous
         </button>
-        {loading ? (
-          <div className="inline-block h-10 w-10 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] text-secondary motion-reduce:animate-[spin_1.5s_linear_infinite]"></div>
-        ) : (
-          <div className="text-xs sm:text-base">Page {pageNumber}</div>
-        )}
+        <div className="text-xs sm:text-base">Page {pageNumber}</div>
         <button
           onClick={() => setPageNumber(pageNumber + 1)}
           disabled={userList?.length < pageLimit || loading}
