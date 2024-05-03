@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { signupUser } from "../redux/reducer/authReducer";
+import { createUser, getUser, signupUser } from "../redux/reducer/authReducer";
 import { getRoleList } from "../redux/reducer/rollListFetchReducer";
 import { BiHide, BiShow } from "react-icons/bi";
 import ConfimationModal from "../component/ConfimationModal";
@@ -11,6 +11,7 @@ import ErrorComponent from "../component/ErrorComponent";
 const Signup = () => {
   const navigate = useNavigate();
   const { loading } = useSelector((state) => state.auth);
+  const user = useSelector((state) => state.auth.user);
   const { roleList } = useSelector((state) => state.roleList);
   const dispatch = useDispatch();
   const [userData, setUserData] = useState({
@@ -40,7 +41,12 @@ const Signup = () => {
     e.preventDefault();
     const isFormValid = validateForm(userData);
     if (isFormValid.isValid) {
-      const result = await dispatch(signupUser(userData));
+      let result = "";
+      if (user) {
+        result = await dispatch(createUser(userData));
+      } else {
+        result = await dispatch(signupUser(userData));
+      }
       if (result.payload) {
         setShowModal(true);
       } else {
@@ -53,6 +59,7 @@ const Signup = () => {
 
   useEffect(() => {
     dispatch(getRoleList());
+    dispatch(getUser());
   }, []);
 
   return (
@@ -60,15 +67,19 @@ const Signup = () => {
       {showModal && (
         <ConfimationModal
           modalTitle={"Successfully"}
-          modalSubTitle={
-            "User signup Succesfully! Click Ok to Redirect Login Page."
-          }
+          modalSubTitle={`${
+            user
+              ? "User created successfully! click ok to polling page"
+              : "User signup Succesfully! Click Ok to Login Page."
+          }`}
           btnOkText={"Ok"}
           onBtnOkClick={handleNavigate}
         />
       )}
       <div className="border bg-white w-[90%] sm:w-[50%] md:w-[40%] xl:w-[30%] 2xl:w-[25%] py-4 md:py-4 px-5 text-center rounded-lg mx-auto mt-6 xl:mt-10 shadow-lg">
-        <h1 className="text-3xl font-semibold">Signup</h1>
+        <h1 className="text-3xl font-semibold">
+          {user ? "Create User" : "Signup"}
+        </h1>
         <form className="flex flex-col my-6 text-black text-left">
           <input
             type="text"
@@ -170,7 +181,7 @@ const Signup = () => {
             loading ? "bg-blue-400" : "bg-blue-500"
           } py-2 text-xl rounded-md mb-4 font-semibold`}
         >
-          {loading ? "Loading..." : "Signup"}
+          {loading ? "Loading..." : user ? "Create User" : "Signup"}
         </button>
         <p className="text-base">
           Already have an account? <Link to="/">Login</Link>

@@ -32,6 +32,20 @@ export const loginUser = createAsyncThunk(
     }
   }
 );
+export const createUser = createAsyncThunk(
+  "auth/createUser",
+  async (userData) => {
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}user/create`,
+        userData
+      );
+      return response.data;
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  }
+);
 
 const authReducer = createSlice({
   name: "auth",
